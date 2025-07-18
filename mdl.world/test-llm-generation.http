@@ -1,0 +1,139 @@
+### Test LLM Text Generation Service
+
+# Generate text from custom JSON data
+POST http://localhost:5000/api/textgeneration/generate-from-json
+Content-Type: application/json
+
+{
+  "jsonData": {
+    "character": {
+      "name": "Zara Nightwhisper",
+      "race": "Cyber-Elf",
+      "class": "Techno-Mage",
+      "level": 12,
+      "attributes": {
+        "strength": 14,
+        "dexterity": 18,
+        "constitution": 16,
+        "intelligence": 20,
+        "wisdom": 15,
+        "charisma": 17
+      },
+      "equipment": {
+        "weapon": "Neural-Link Staff",
+        "armor": "Quantum-Weave Robes",
+        "accessories": ["Holographic Spellbook", "Cyber-Crystal Pendant"]
+      },
+      "background": "A former data-archeologist turned spellcaster who discovered ancient magical algorithms"
+    }
+  },
+  "prompt": "Create a detailed character description for this D&D character."
+}
+
+###
+
+# Generate world narrative
+POST http://localhost:5000/api/textgeneration/generate-world-narrative
+Content-Type: application/json
+
+"Nexus Prime: The Magitech Convergence"
+
+###
+
+# Generate character description
+POST http://localhost:5000/api/textgeneration/generate-character-description
+Content-Type: application/json
+
+{
+  "name": "Captain Vex Stormforge",
+  "race": "Techno-Dwarf",
+  "profession": "Starship Engineer",
+  "age": 150,
+  "appearance": {
+    "height": "4'8\"",
+    "weight": "180 lbs",
+    "hair": "Silver beard with fiber-optic threads",
+    "eyes": "Cybernetic blue with HUD display",
+    "distinguishing_features": ["Mechanical left arm", "Runic tattoos that glow when casting spells"]
+  },
+  "personality": {
+    "traits": ["Meticulous", "Stubborn", "Protective of crew"],
+    "ideals": ["Technology should serve magic, not replace it"],
+    "bonds": ["The starship 'Forge of Stars' is my life's work"],
+    "flaws": ["Distrusts pure magic without technological backup"]
+  },
+  "background": "Former mining engineer who found ancient dwarven star-charts and built the first magitech FTL drive"
+}
+
+###
+
+# Generate location description
+POST http://localhost:5000/api/textgeneration/generate-location-description
+Content-Type: application/json
+
+{
+  "name": "The Floating Spires of Aethermoor",
+  "type": "Magitech City",
+  "location": "Suspended above the Crystal Canyons",
+  "population": 50000,
+  "government": "Techno-Mage Council",
+  "features": {
+    "architecture": "Crystalline towers with energy conduits",
+    "transportation": "Gravity-defying platforms and teleportation circles",
+    "districts": [
+      {
+        "name": "The Nexus Core",
+        "description": "Central hub containing the city's magitech power source"
+      },
+      {
+        "name": "The Artificer Quarter",
+        "description": "Where magical items are crafted using advanced technology"
+      },
+      {
+        "name": "The Data Gardens",
+        "description": "Living computational forests that process magical algorithms"
+      }
+    ]
+  },
+  "atmosphere": "Humming with both arcane energy and technological power",
+  "notable_locations": [
+    "The Great Library of Quantum Tomes",
+    "The Astral Communication Array",
+    "The Temporal Research Institute"
+  ]
+}
+
+###
+
+# Generate event narrative
+POST http://localhost:5000/api/textgeneration/generate-event-narrative
+Content-Type: application/json
+
+{
+  "name": "The Convergence Crisis",
+  "type": "World-Changing Event",
+  "date": "The Third Cycle of the Quantum Moon",
+  "location": "The Nexus Realms",
+  "participants": [
+    "The Techno-Mage Alliance",
+    "The Cyber-Dragon Collective",
+    "The Quantum Resistance"
+  ],
+  "cause": "A catastrophic failure in the reality-stabilization matrix",
+  "effects": {
+    "immediate": [
+      "Magical and technological systems began merging uncontrollably",
+      "Time streams became unstable",
+      "Several pocket dimensions collapsed into the prime reality"
+    ],
+    "long_term": [
+      "Creation of hybrid magitech beings",
+      "Establishment of new laws of physics",
+      "Formation of the Unified Councils of Magic and Technology"
+    ]
+  },
+  "resolution": "The crisis was resolved through the combined efforts of all factions, leading to the Treaty of Convergence",
+  "significance": "This event fundamentally changed how magic and technology interact in the world"
+}
+
+###

@@ -11,8 +11,14 @@ namespace mdl.world
             // Add services to the container.
             builder.Services.AddControllers();
             
+            // Register HTTP client for LLM service
+            builder.Services.AddHttpClient<ILLMTextGenerationService, LLMTextGenerationService>();
+            
             // Register world generation service
             builder.Services.AddScoped<IWorldGenerationService, WorldGenerationService>();
+            
+            // Register LLM text generation service
+            builder.Services.AddScoped<ILLMTextGenerationService, LLMTextGenerationService>();
 
             var app = builder.Build();
 
