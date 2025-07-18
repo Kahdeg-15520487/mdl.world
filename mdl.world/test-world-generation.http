@@ -1,0 +1,105 @@
+### Test World Generation Service
+
+# Basic world generation
+GET http://localhost:5171/api/world/generate
+
+###
+
+# Custom world generation
+POST http://localhost:5171/api/world/generate-custom
+Content-Type: application/json
+
+{
+  "worldName": "Aethermoor",
+  "fantasy": 8,
+  "scifi": 5,
+  "magicLevel": 7,
+  "techLevel": 4,
+  "populationSize": 6,
+  "economicComplexity": 5,
+  "politicalComplexity": 6,
+  "environmentalDiversity": 8,
+  "culturalDiversity": 7,
+  "conflictLevel": 5,
+  "mysteryLevel": 6,
+  "placesCount": 12,
+  "charactersCount": 8,
+  "eventsCount": 10,
+  "equipmentCount": 15
+}
+
+###
+
+# Complete world generation
+POST http://localhost:5171/api/world/generate-complete
+Content-Type: application/json
+
+{
+  "worldName": "Nexus Prime",
+  "fantasy": 7,
+  "scifi": 8,
+  "magicLevel": 6,
+  "techLevel": 9,
+  "populationSize": 8,
+  "economicComplexity": 7,
+  "politicalComplexity": 8,
+  "environmentalDiversity": 9,
+  "culturalDiversity": 8,
+  "conflictLevel": 6,
+  "mysteryLevel": 7,
+  "continentCount": 3,
+  "countryCount": 8,
+  "regionCount": 15,
+  "cityCount": 20,
+  "townCount": 35,
+  "villageCount": 50,
+  "dungeonCount": 12,
+  "naturalFeatureCount": 25,
+  "additionalPlaceCount": 10,
+  "characterCount": 30,
+  "eventCount": 25,
+  "equipmentCount": 40,
+  "spellBookCount": 15,
+  "runeCount": 20,
+  "alchemyRecipeCount": 18,
+  "technologyCount": 25,
+  "includeConnections": true,
+  "includeEconomics": true,
+  "includePolitics": true
+}
+
+###
+
+# Generate a custom world
+POST http://localhost:5171/world/generate-custom
+Content-Type: application/json
+
+{
+  "worldName": "Cyber-Druidic Sanctuary",
+  "theme": "Techno-Druidism",
+  "techLevel": 6,
+  "magicLevel": 9,
+  "worldSize": 30,
+  "includeMagicTech": true,
+  "includeSpaceTravel": false,
+  "includeAncientRuins": true,
+  "preferredBiomes": ["Bio-Mechanical Jungles", "Mystical Data Centers"],
+  "preferredRaces": ["Techno-Dwarves", "Cyber-Elves"],
+  "difficultyLevel": "Medium"
+}
+
+###
+
+# Enhance a world with additional places
+POST http://localhost:5171/world/test-id/enhance
+Content-Type: application/json
+
+{
+  "worldName": "Enhanced Realm",
+  "contentType": "places"
+}
+
+###
+
+# Get sample worlds
+GET http://localhost:5171/world

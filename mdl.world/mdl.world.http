@@ -1,0 +1,6 @@
+@mdl.world_HostAddress = http://localhost:5171
+
+GET {{mdl.world_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
