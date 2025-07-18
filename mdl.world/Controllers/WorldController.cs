@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using mdl.worlddata.Core;
 using mdl.world.Services;
+using System.Text.Json;
 
 namespace mdl.world.Controllers
 {
@@ -10,19 +11,66 @@ namespace mdl.world.Controllers
     {
         private readonly ILogger<WorldController> _logger;
         private readonly IWorldGenerationService _worldGenerationService;
+        private readonly IWorldStorageService _worldStorageService;
 
-        public WorldController(ILogger<WorldController> logger, IWorldGenerationService worldGenerationService)
+        public WorldController(ILogger<WorldController> logger, IWorldGenerationService worldGenerationService, IWorldStorageService worldStorageService)
         {
             _logger = logger;
             _worldGenerationService = worldGenerationService;
+            _worldStorageService = worldStorageService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<World>>> Get()
+        public async Task<ActionResult<IEnumerable<WorldMetadata>>> Get()
         {
-            // This could be enhanced to return stored worlds
-            var sampleWorld = await _worldGenerationService.GenerateWorldAsync("Sample World", "Fantasy-SciFi", 6, 8);
-            return Ok(new[] { sampleWorld });
+            try
+            {
+                var worlds = await _worldStorageService.GetAllWorldsAsync();
+                return Ok(worlds);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving worlds from storage");
+                return StatusCode(500, "An error occurred while retrieving worlds");
+            }
+        }
+
+        [HttpGet("{worldId}")]
+        public async Task<ActionResult<World>> GetWorld(string worldId)
+        {
+            try
+            {
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                if (world == null)
+                {
+                    return NotFound($"World with ID {worldId} not found");
+                }
+                return Ok(world);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving world: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while retrieving the world");
+            }
+        }
+
+        [HttpDelete("{worldId}")]
+        public async Task<ActionResult> DeleteWorld(string worldId)
+        {
+            try
+            {
+                var deleted = await _worldStorageService.DeleteWorldAsync(worldId);
+                if (!deleted)
+                {
+                    return NotFound($"World with ID {worldId} not found");
+                }
+                return Ok($"World {worldId} deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting world: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while deleting the world");
+            }
         }
 
         [HttpPost("generate")]
@@ -37,7 +85,10 @@ namespace mdl.world.Controllers
                     request.MagicLevel
                 );
                 
-                return Ok(world);
+                // Automatically save the generated world
+                var savedWorld = await _worldStorageService.SaveWorldAsync(world);
+                
+                return Ok(savedWorld);
             }
             catch (Exception ex)
             {
@@ -52,7 +103,11 @@ namespace mdl.world.Controllers
             try
             {
                 var world = await _worldGenerationService.GenerateCustomWorldAsync(parameters);
-                return Ok(world);
+                
+                // Automatically save the generated world
+                var savedWorld = await _worldStorageService.SaveWorldAsync(world);
+                
+                return Ok(savedWorld);
             }
             catch (Exception ex)
             {
@@ -66,9 +121,15 @@ namespace mdl.world.Controllers
         {
             try
             {
-                // Generate a base world using the worldId as the name
-                var world = await _worldGenerationService.GenerateWorldAsync(
-                    request.WorldName ?? worldId);
+                // First try to load existing world from storage
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                
+                if (world == null)
+                {
+                    // If not found, generate a new world using the worldId as the name
+                    world = await _worldGenerationService.GenerateWorldAsync(
+                        request.WorldName ?? worldId);
+                }
                 
                 // Use the new WorldEnhancementService to enhance the world
                 var enhancementService = HttpContext.RequestServices.GetService<IWorldEnhancementService>();
@@ -78,12 +139,19 @@ namespace mdl.world.Controllers
                         world, 
                         $"Enhance this world with focus on {request.ContentType}");
                     
-                    return Ok(enhancementResult.UpdatedWorld);
+                    // Save the enhanced world
+                    var savedWorld = await _worldStorageService.SaveWorldAsync(enhancementResult.UpdatedWorld);
+                    
+                    return Ok(savedWorld);
                 }
                 
                 // Fallback to basic enhancement if WorldEnhancementService not available
                 var enhancedWorld = await _worldGenerationService.EnhanceWorldAsync(world, request.ContentType);
-                return Ok(enhancedWorld);
+                
+                // Save the enhanced world
+                var savedEnhancedWorld = await _worldStorageService.SaveWorldAsync(enhancedWorld);
+                
+                return Ok(savedEnhancedWorld);
             }
             catch (Exception ex)
             {
@@ -146,7 +214,11 @@ namespace mdl.world.Controllers
                 };
 
                 var world = await _worldGenerationService.GenerateCompleteWorldAsync(parameters, request);
-                return Ok(world);
+                
+                // Automatically save the generated world
+                var savedWorld = await _worldStorageService.SaveWorldAsync(world);
+                
+                return Ok(savedWorld);
             }
             catch (Exception ex)
             {
@@ -160,8 +232,16 @@ namespace mdl.world.Controllers
         {
             try
             {
-                // Generate or retrieve the world
-                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                // Try to load from storage first
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                
+                // If not found, generate a sample world
+                if (world == null)
+                {
+                    world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                    // Optionally save it for future reference
+                    await _worldStorageService.SaveWorldAsync(world);
+                }
                 
                 var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
                 if (htmlRenderingService == null)
@@ -184,7 +264,15 @@ namespace mdl.world.Controllers
         {
             try
             {
-                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                // Try to load from storage first
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                
+                // If not found, generate a sample world
+                if (world == null)
+                {
+                    world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                    await _worldStorageService.SaveWorldAsync(world);
+                }
                 
                 var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
                 if (htmlRenderingService == null)
@@ -207,7 +295,15 @@ namespace mdl.world.Controllers
         {
             try
             {
-                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                // Try to load from storage first
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                
+                // If not found, generate a sample world
+                if (world == null)
+                {
+                    world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                    await _worldStorageService.SaveWorldAsync(world);
+                }
                 
                 var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
                 if (htmlRenderingService == null)
@@ -230,7 +326,15 @@ namespace mdl.world.Controllers
         {
             try
             {
-                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                // Try to load from storage first
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                
+                // If not found, generate a sample world
+                if (world == null)
+                {
+                    world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                    await _worldStorageService.SaveWorldAsync(world);
+                }
                 
                 var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
                 if (htmlRenderingService == null)
@@ -245,6 +349,113 @@ namespace mdl.world.Controllers
             {
                 _logger.LogError(ex, "Error generating item wiki: {WorldId}/{ItemId}", worldId, itemId);
                 return StatusCode(500, "An error occurred while generating the item wiki");
+            }
+        }
+
+        [HttpPut("{worldId}")]
+        public async Task<ActionResult<World>> UpdateWorld(string worldId, [FromBody] World world)
+        {
+            try
+            {
+                // Ensure the world ID matches
+                world.Id = worldId;
+                
+                var savedWorld = await _worldStorageService.SaveWorldAsync(world);
+                return Ok(savedWorld);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating world: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while updating the world");
+            }
+        }
+
+        [HttpPost("{worldId}/copy")]
+        public async Task<ActionResult<World>> CopyWorld(string worldId, [FromBody] CopyWorldRequest request)
+        {
+            try
+            {
+                var originalWorld = await _worldStorageService.LoadWorldAsync(worldId);
+                if (originalWorld == null)
+                {
+                    return NotFound($"World with ID {worldId} not found");
+                }
+
+                // Create a copy with a new ID and name
+                var copiedWorld = new World
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = request.NewName ?? $"{originalWorld.Name} - Copy",
+                    Description = originalWorld.Description,
+                    CreationDate = DateTime.UtcNow,
+                    WorldInfo = originalWorld.WorldInfo,
+                    Places = originalWorld.Places,
+                    HistoricFigures = originalWorld.HistoricFigures,
+                    WorldEvents = originalWorld.WorldEvents,
+                    Equipment = originalWorld.Equipment,
+                    SpellBooks = originalWorld.SpellBooks,
+                    RunesOfPower = originalWorld.RunesOfPower,
+                    AlchemyRecipes = originalWorld.AlchemyRecipes,
+                    TechnicalSpecs = originalWorld.TechnicalSpecs
+                };
+
+                var savedWorld = await _worldStorageService.SaveWorldAsync(copiedWorld);
+                return Ok(savedWorld);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error copying world: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while copying the world");
+            }
+        }
+
+        [HttpGet("{worldId}/export")]
+        public async Task<ActionResult> ExportWorld(string worldId)
+        {
+            try
+            {
+                var world = await _worldStorageService.LoadWorldAsync(worldId);
+                if (world == null)
+                {
+                    return NotFound($"World with ID {worldId} not found");
+                }
+
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var json = JsonSerializer.Serialize(world, jsonOptions);
+                var fileName = $"{world.Name.Replace(" ", "_")}_export.json";
+                
+                return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error exporting world: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while exporting the world");
+            }
+        }
+
+        [HttpPost("import")]
+        public async Task<ActionResult<World>> ImportWorld([FromBody] World world)
+        {
+            try
+            {
+                // Ensure the world has a unique ID
+                if (await _worldStorageService.WorldExistsAsync(world.Id))
+                {
+                    world.Id = Guid.NewGuid().ToString();
+                }
+
+                var savedWorld = await _worldStorageService.SaveWorldAsync(world);
+                return Ok(savedWorld);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error importing world: {WorldName}", world.Name);
+                return StatusCode(500, "An error occurred while importing the world");
             }
         }
     }
@@ -308,5 +519,10 @@ namespace mdl.world.Controllers
         public int TechLevel { get; set; }
         public int MagicLevel { get; set; }
         public string Description { get; set; } = string.Empty;
+    }
+
+    public class CopyWorldRequest
+    {
+        public string? NewName { get; set; }
     }
 }

@@ -17,6 +17,9 @@ namespace mdl.world
             // Register world generation service
             builder.Services.AddScoped<IWorldGenerationService, WorldGenerationService>();
             
+            // Register world storage service
+            builder.Services.AddScoped<IWorldStorageService, JsonWorldStorageService>();
+            
             // Register LLM text generation service
             builder.Services.AddScoped<ILLMTextGenerationService, LLMTextGenerationService>();
             

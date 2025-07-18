@@ -1,0 +1,177 @@
+### World Storage API Tests
+
+# Get all stored worlds
+GET {{baseUrl}}/World
+Accept: application/json
+
+###
+
+# Get a specific world by ID
+GET {{baseUrl}}/World/sample-world-id
+Accept: application/json
+
+###
+
+# Generate and automatically save a new world
+POST {{baseUrl}}/World/generate
+Content-Type: application/json
+
+{
+  "worldName": "Test Fantasy World",
+  "theme": "Fantasy-SciFi",
+  "techLevel": 6,
+  "magicLevel": 8
+}
+
+###
+
+# Generate a complete world (automatically saved)
+POST {{baseUrl}}/World/generate-complete
+Content-Type: application/json
+
+{
+  "worldName": "Complete Test World",
+  "theme": "Cyberpunk-Fantasy",
+  "techLevel": 9,
+  "magicLevel": 6,
+  "totalPlaces": 25,
+  "continentCount": 2,
+  "countryCount": 4,
+  "regionCount": 8,
+  "cityCount": 10,
+  "townCount": 12,
+  "villageCount": 15,
+  "dungeonCount": 6,
+  "naturalFeatureCount": 8,
+  "characterCount": 15,
+  "historicalEventCount": 10,
+  "equipmentCount": 20,
+  "spellBookCount": 5,
+  "runeCount": 8,
+  "alchemyRecipeCount": 6,
+  "technologyCount": 10,
+  "includeMagicTech": true,
+  "includeSpaceTravel": false,
+  "includeAncientRuins": true,
+  "generateHierarchy": true,
+  "generateConnections": true,
+  "generateEconomy": true,
+  "generatePolitics": true,
+  "difficultyLevel": "Medium",
+  "worldScale": "Continental"
+}
+
+###
+
+# Update an existing world
+PUT {{baseUrl}}/World/{{worldId}}
+Content-Type: application/json
+
+{
+  "id": "{{worldId}}",
+  "name": "Updated World Name",
+  "description": "Updated description",
+  "worldInfo": {
+    "genre": "Fantasy",
+    "timeEra": "Medieval",
+    "magicLevel": "High",
+    "technologyLevel": "Renaissance"
+  },
+  "places": [],
+  "historicFigures": [],
+  "worldEvents": [],
+  "equipment": [],
+  "spellBooks": [],
+  "runesOfPower": [],
+  "alchemyRecipes": [],
+  "technicalSpecs": []
+}
+
+###
+
+# Copy an existing world
+POST {{baseUrl}}/World/{{worldId}}/copy
+Content-Type: application/json
+
+{
+  "newName": "Copied World Name"
+}
+
+###
+
+# Enhance an existing world (loads from storage if exists)
+POST {{baseUrl}}/World/{{worldId}}/enhance
+Content-Type: application/json
+
+{
+  "worldName": "Enhanced World",
+  "contentType": "characters"
+}
+
+###
+
+# Export world as JSON file
+GET {{baseUrl}}/World/{{worldId}}/export
+Accept: application/json
+
+###
+
+# Import a world from JSON
+POST {{baseUrl}}/World/import
+Content-Type: application/json
+
+{
+  "id": "imported-world-id",
+  "name": "Imported World",
+  "description": "A world imported from JSON",
+  "worldInfo": {
+    "genre": "Fantasy",
+    "timeEra": "Medieval",
+    "magicLevel": "High",
+    "technologyLevel": "Renaissance"
+  },
+  "places": [],
+  "historicFigures": [],
+  "worldEvents": [],
+  "equipment": [],
+  "spellBooks": [],
+  "runesOfPower": [],
+  "alchemyRecipes": [],
+  "technicalSpecs": []
+}
+
+###
+
+# Delete a world
+DELETE {{baseUrl}}/World/{{worldId}}
+Accept: application/json
+
+###
+
+# Get world wiki (loads from storage if exists)
+GET {{baseUrl}}/World/{{worldId}}/wiki
+Accept: text/html
+
+###
+
+# Get place wiki (loads from storage if exists)
+GET {{baseUrl}}/World/{{worldId}}/wiki/place/{{placeId}}
+Accept: text/html
+
+###
+
+# Get character wiki (loads from storage if exists)
+GET {{baseUrl}}/World/{{worldId}}/wiki/character/{{characterId}}
+Accept: text/html
+
+###
+
+# Get item wiki (loads from storage if exists)
+GET {{baseUrl}}/World/{{worldId}}/wiki/item/{{itemId}}
+Accept: text/html
+
+@baseUrl = https://localhost:7000
+@worldId = sample-world-id
+@placeId = sample-place-id
+@characterId = sample-character-id
+@itemId = sample-item-id
