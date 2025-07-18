@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace mdl.worlddata.Items
 {
     // Equipment and artifacts
-    public abstract class Equipment
+    public class Equipment
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; } = string.Empty;

@@ -11,6 +11,9 @@ namespace mdl.world
             // Add services to the container.
             builder.Services.AddControllers();
             
+            // Add CORS
+            builder.Services.AddCors();
+            
             // Register HTTP client for LLM service
             builder.Services.AddHttpClient<ILLMTextGenerationService, LLMTextGenerationService>();
             
@@ -36,6 +39,15 @@ namespace mdl.world
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable static files (for the frontend)
+            app.UseStaticFiles();
+            
+            // Enable CORS for frontend access
+            app.UseCors(policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseAuthorization();
 
