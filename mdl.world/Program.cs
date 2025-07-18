@@ -19,6 +19,12 @@ namespace mdl.world
             
             // Register LLM text generation service
             builder.Services.AddScoped<ILLMTextGenerationService, LLMTextGenerationService>();
+            
+            // Register world enhancement service
+            builder.Services.AddScoped<IWorldEnhancementService, WorldEnhancementService>();
+            
+            // Register HTML rendering service
+            builder.Services.AddScoped<IWorldHtmlRenderingService, WorldHtmlRenderingService>();
 
             var app = builder.Build();
 

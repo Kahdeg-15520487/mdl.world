@@ -10,6 +10,19 @@ This service provides integration with a local llama-cpp server to generate desc
 - **Location Descriptions**: Generate atmospheric descriptions of places and environments
 - **Event Narratives**: Create compelling stories about historical events and occurrences
 
+## Related Services
+
+### World Enhancement Service
+The `IWorldEnhancementService` builds upon this LLM service to provide intelligent world editing capabilities:
+
+- **Iterative World Building**: Users can provide comments and feedback to enhance existing worlds
+- **Smart JSON Updates**: Automatically updates world data structures based on user input
+- **Section-Specific Regeneration**: Regenerate specific parts of the world (places, characters, events)
+- **Content Addition**: Add new content based on natural language descriptions
+- **Property Updates**: Modify world properties through conversational input
+
+See `test-world-enhancement.http` for usage examples of the integrated world enhancement features.
+
 ## Configuration
 
 ### appsettings.json

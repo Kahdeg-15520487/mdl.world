@@ -66,11 +66,23 @@ namespace mdl.world.Controllers
         {
             try
             {
-                // In a real implementation, you would retrieve the world from storage
-                // For now, we'll generate a new world and enhance it
-                var world = await _worldGenerationService.GenerateWorldAsync(request.WorldName ?? "Enhanced World");
-                var enhancedWorld = await _worldGenerationService.EnhanceWorldAsync(world, request.ContentType);
+                // Generate a base world using the worldId as the name
+                var world = await _worldGenerationService.GenerateWorldAsync(
+                    request.WorldName ?? worldId);
                 
+                // Use the new WorldEnhancementService to enhance the world
+                var enhancementService = HttpContext.RequestServices.GetService<IWorldEnhancementService>();
+                if (enhancementService != null)
+                {
+                    var enhancementResult = await enhancementService.EnhanceWorldAsync(
+                        world, 
+                        $"Enhance this world with focus on {request.ContentType}");
+                    
+                    return Ok(enhancementResult.UpdatedWorld);
+                }
+                
+                // Fallback to basic enhancement if WorldEnhancementService not available
+                var enhancedWorld = await _worldGenerationService.EnhanceWorldAsync(world, request.ContentType);
                 return Ok(enhancedWorld);
             }
             catch (Exception ex)
@@ -140,6 +152,99 @@ namespace mdl.world.Controllers
             {
                 _logger.LogError(ex, "Error generating complete world: {WorldName}", request.WorldName);
                 return StatusCode(500, "An error occurred while generating the complete world");
+            }
+        }
+
+        [HttpGet("{worldId}/wiki")]
+        public async Task<ActionResult> GetWorldWiki(string worldId)
+        {
+            try
+            {
+                // Generate or retrieve the world
+                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                
+                var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
+                if (htmlRenderingService == null)
+                {
+                    return StatusCode(500, "HTML rendering service not available");
+                }
+
+                var html = await htmlRenderingService.RenderWorldAsHtmlAsync(world);
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating world wiki: {WorldId}", worldId);
+                return StatusCode(500, "An error occurred while generating the world wiki");
+            }
+        }
+
+        [HttpGet("{worldId}/wiki/place/{placeId}")]
+        public async Task<ActionResult> GetPlaceWiki(string worldId, string placeId)
+        {
+            try
+            {
+                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                
+                var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
+                if (htmlRenderingService == null)
+                {
+                    return StatusCode(500, "HTML rendering service not available");
+                }
+
+                var html = await htmlRenderingService.RenderPlaceAsHtmlAsync(world, placeId);
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating place wiki: {WorldId}/{PlaceId}", worldId, placeId);
+                return StatusCode(500, "An error occurred while generating the place wiki");
+            }
+        }
+
+        [HttpGet("{worldId}/wiki/character/{characterId}")]
+        public async Task<ActionResult> GetCharacterWiki(string worldId, string characterId)
+        {
+            try
+            {
+                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                
+                var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
+                if (htmlRenderingService == null)
+                {
+                    return StatusCode(500, "HTML rendering service not available");
+                }
+
+                var html = await htmlRenderingService.RenderCharacterAsHtmlAsync(world, characterId);
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating character wiki: {WorldId}/{CharacterId}", worldId, characterId);
+                return StatusCode(500, "An error occurred while generating the character wiki");
+            }
+        }
+
+        [HttpGet("{worldId}/wiki/item/{itemId}")]
+        public async Task<ActionResult> GetItemWiki(string worldId, string itemId)
+        {
+            try
+            {
+                var world = await _worldGenerationService.GenerateWorldAsync(worldId, "Fantasy-SciFi", 6, 8);
+                
+                var htmlRenderingService = HttpContext.RequestServices.GetService<IWorldHtmlRenderingService>();
+                if (htmlRenderingService == null)
+                {
+                    return StatusCode(500, "HTML rendering service not available");
+                }
+
+                var html = await htmlRenderingService.RenderItemAsHtmlAsync(world, itemId);
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating item wiki: {WorldId}/{ItemId}", worldId, itemId);
+                return StatusCode(500, "An error occurred while generating the item wiki");
             }
         }
     }

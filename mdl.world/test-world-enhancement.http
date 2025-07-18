@@ -1,0 +1,211 @@
+### Test World Enhancement Service
+
+# Create a world and enhance it with user comments
+POST http://localhost:5000/api/worldenhancement/create-and-enhance
+Content-Type: application/json
+
+{
+  "worldName": "Aethermoor Nexus",
+  "theme": "Fantasy-SciFi",
+  "techLevel": 6,
+  "magicLevel": 8,
+  "userComment": "Add floating cities connected by magical energy bridges. Include cyber-enhanced dragons that guard ancient digital archives. Make sure there are underground techno-mage laboratories.",
+  "targetSection": null
+}
+
+###
+
+# Enhance an existing world with user comments
+POST http://localhost:5000/api/worldenhancement/enhance
+Content-Type: application/json
+
+{
+  "world": {
+    "id": "test-world-1",
+    "name": "Nexus Prime",
+    "description": "A world where magic and technology coexist",
+    "worldInfo": {
+      "genre": "Fantasy-SciFi",
+      "technologyLevel": "Advanced",
+      "magicLevel": "High",
+      "activeThemes": ["Magitech", "Cyber-Fantasy"]
+    },
+    "places": [
+      {
+        "id": "place-1",
+        "name": "Crystal Spire City",
+        "description": "A towering city of crystalline structures",
+        "type": "City",
+        "population": 50000
+      }
+    ],
+    "historicFigures": [
+      {
+        "id": "char-1",
+        "name": "Archmagus Vex",
+        "description": "A powerful techno-mage",
+        "title": "Supreme Technomancer"
+      }
+    ]
+  },
+  "userComment": "I want to add a dark underground network of rogue AIs that are trying to corrupt the magical systems. Also, make the Crystal Spire City more steampunk with brass and copper elements.",
+  "targetSection": "places"
+}
+
+###
+
+# Add new content to an existing world
+POST http://localhost:5000/api/worldenhancement/add-content
+Content-Type: application/json
+
+{
+  "world": {
+    "id": "test-world-1",
+    "name": "Nexus Prime",
+    "description": "A world where magic and technology coexist",
+    "worldInfo": {
+      "genre": "Fantasy-SciFi",
+      "technologyLevel": "Advanced",
+      "magicLevel": "High"
+    },
+    "places": [],
+    "historicFigures": []
+  },
+  "contentType": "character",
+  "description": "A mysterious figure known as the 'Data Witch' who can manipulate both digital information and arcane energies. She runs a black market for magical software and cursed applications. Has cybernetic implants that glow with runic symbols."
+}
+
+###
+
+# Regenerate a specific section of the world
+POST http://localhost:5000/api/worldenhancement/regenerate-section
+Content-Type: application/json
+
+{
+  "world": {
+    "id": "test-world-1",
+    "name": "Nexus Prime",
+    "description": "A world where magic and technology coexist",
+    "places": [
+      {
+        "id": "place-1",
+        "name": "Crystal Spire City",
+        "description": "A towering city of crystalline structures",
+        "type": "City",
+        "population": 50000
+      }
+    ],
+    "historicFigures": []
+  },
+  "sectionType": "places",
+  "sectionId": "place-1",
+  "userComment": "Make this city more vibrant and alive. Add markets, taverns, and interesting districts. Include some conflict between the old magical ways and new technology users."
+}
+
+###
+
+# Update world properties based on user feedback
+POST http://localhost:5000/api/worldenhancement/update-properties
+Content-Type: application/json
+
+{
+  "world": {
+    "id": "test-world-1",
+    "name": "Nexus Prime",
+    "description": "A world where magic and technology coexist",
+    "worldInfo": {
+      "genre": "Fantasy-SciFi",
+      "technologyLevel": "Advanced",
+      "magicLevel": "High"
+    }
+  },
+  "userComment": "This world should be more post-apocalyptic. The magic and technology should be remnants of a lost civilization. Make it grittier and more survival-focused."
+}
+
+###
+
+# Generate a comprehensive narrative for a world
+POST http://localhost:5000/api/worldenhancement/generate-narrative
+Content-Type: application/json
+
+{
+  "id": "test-world-1",
+  "name": "Shadowtech Realms",
+  "description": "A cyberpunk-fantasy world where corporations wield both magic and technology",
+  "worldInfo": {
+    "genre": "Cyberpunk-Fantasy",
+    "technologyLevel": "Hyper-Advanced",
+    "magicLevel": "Corporate-Controlled",
+    "activeThemes": ["Corporate Magic", "Digital Shamanism", "Cyber-Punk"]
+  },
+  "places": [
+    {
+      "id": "place-1",
+      "name": "Neo-Tokyo Arcane",
+      "description": "A massive megacity where holographic spells light up the night sky",
+      "type": "Megacity",
+      "population": 20000000
+    },
+    {
+      "id": "place-2",
+      "name": "The Undergrid",
+      "description": "Underground network of magical hackers and digital shamans",
+      "type": "Hidden Network",
+      "population": 500000
+    }
+  ],
+  "historicFigures": [
+    {
+      "id": "char-1",
+      "name": "Kenji Shadowweaver",
+      "description": "A legendary hacker-mage who first merged code with spellcasting",
+      "title": "The First Cyber-Shaman"
+    },
+    {
+      "id": "char-2",
+      "name": "Dr. Elena Voidtech",
+      "description": "CEO of the largest magical corporation, specializing in weaponized enchantments",
+      "title": "Corporate Archmage"
+    }
+  ],
+  "worldEvents": [
+    {
+      "id": "event-1",
+      "name": "The Great Code Convergence",
+      "description": "The event that first merged digital and magical systems",
+      "date": "2157 CE"
+    }
+  ]
+}
+
+###
+
+# Complex world enhancement with multiple changes
+POST http://localhost:5000/api/worldenhancement/enhance
+Content-Type: application/json
+
+{
+  "world": {
+    "id": "test-world-2",
+    "name": "The Shattered Realms",
+    "description": "A world broken into floating islands after a magical catastrophe",
+    "worldInfo": {
+      "genre": "High Fantasy",
+      "technologyLevel": "Medieval",
+      "magicLevel": "Chaotic"
+    },
+    "places": [
+      {
+        "id": "place-1",
+        "name": "Skyhold Citadel",
+        "description": "A fortress floating in the void between realms",
+        "type": "Fortress",
+        "population": 5000
+      }
+    ]
+  },
+  "userComment": "Transform this into a more science-fantasy setting. Add ancient alien ruins that contain both magical and technological artifacts. The floating islands should be held up by a combination of anti-gravity technology and levitation spells. Include a faction of scholar-engineers who study the merger of magic and alien tech. Also add some dangerous void-storms that travel between the islands carrying both energy discharges and magical anomalies.",
+  "targetSection": null
+}
+
+###

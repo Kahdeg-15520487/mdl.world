@@ -1,0 +1,47 @@
+### Test the new World Wiki endpoints
+
+### 1. Generate a world wiki page
+GET {{baseUrl}}/world/test-world-1/wiki
+Accept: text/html
+
+### 2. Generate a place wiki page
+GET {{baseUrl}}/world/test-world-1/wiki/place/place-id-123
+Accept: text/html
+
+### 3. Generate a character wiki page
+GET {{baseUrl}}/world/test-world-1/wiki/character/character-id-456
+Accept: text/html
+
+### 4. Generate an item wiki page
+GET {{baseUrl}}/world/test-world-1/wiki/item/item-id-789
+Accept: text/html
+
+### 5. Generate a complete world first, then view its wiki
+POST {{baseUrl}}/world/generate-complete
+Content-Type: application/json
+
+{
+  "WorldName": "Aethermoor",
+  "Theme": "Fantasy-SciFi",
+  "TechLevel": 6,
+  "MagicLevel": 8,
+  "TotalPlaces": 20,
+  "ContinentCount": 2,
+  "CountryCount": 4,
+  "CityCount": 8,
+  "CharacterCount": 15,
+  "EquipmentCount": 20,
+  "SpellBookCount": 5,
+  "HistoricalEventCount": 10,
+  "IncludeMagicTech": true,
+  "IncludeAncientRuins": true,
+  "GenerateHierarchy": true,
+  "GenerateConnections": true,
+  "PreferredBiomes": ["Forest", "Mountain", "Desert"],
+  "PreferredRaces": ["Human", "Elf", "Dwarf", "Orc"],
+  "DifficultyLevel": "Medium"
+}
+
+### 6. Then view the generated world's wiki
+GET {{baseUrl}}/world/Aethermoor/wiki
+Accept: text/html

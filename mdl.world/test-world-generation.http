@@ -1,12 +1,12 @@
 ### Test World Generation Service
 
 # Basic world generation
-GET http://localhost:5171/api/world/generate
+GET http://localhost:5000/api/world/generate
 
 ###
 
 # Custom world generation
-POST http://localhost:5171/api/world/generate-custom
+POST http://localhost:5000/api/world/generate-custom
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 ###
 
 # Complete world generation
-POST http://localhost:5171/api/world/generate-complete
+POST http://localhost:5000/api/world/generate-complete
 Content-Type: application/json
 
 {
@@ -71,7 +71,7 @@ Content-Type: application/json
 ###
 
 # Generate a custom world
-POST http://localhost:5171/world/generate-custom
+POST http://localhost:5000/world/generate-custom
 Content-Type: application/json
 
 {
@@ -91,7 +91,7 @@ Content-Type: application/json
 ###
 
 # Enhance a world with additional places
-POST http://localhost:5171/world/test-id/enhance
+POST http://localhost:5000/world/test-id/enhance
 Content-Type: application/json
 
 {
@@ -102,4 +102,4 @@ Content-Type: application/json
 ###
 
 # Get sample worlds
-GET http://localhost:5171/world
+GET http://localhost:5000/world
