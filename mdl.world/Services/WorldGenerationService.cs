@@ -105,7 +105,7 @@ namespace mdl.world.Services
             await GenerateMagicAsync(world, parameters);
             await GenerateTechnologyAsync(world, parameters);
 
-            _logger.LogInformation("Successfully generated world: {WorldName} with {PlaceCount} places, {CharacterCount} characters", 
+            _logger.LogInformation("Successfully generated world: {WorldName} with {PlaceCount} places, {CharacterCount} characters",
                 world.Name, world.Places.Count, world.HistoricFigures.Count);
 
             return world;
@@ -165,7 +165,7 @@ namespace mdl.world.Services
                 await GeneratePoliticalSystemsAsync(world, parameters);
             }
 
-            _logger.LogInformation("Successfully generated complete world: {WorldName} with {PlaceCount} places, {CharacterCount} characters, {EventCount} events", 
+            _logger.LogInformation("Successfully generated complete world: {WorldName} with {PlaceCount} places, {CharacterCount} characters, {EventCount} events",
                 world.Name, world.Places.Count, world.HistoricFigures.Count, world.WorldEvents.Count);
 
             return world;
@@ -174,7 +174,7 @@ namespace mdl.world.Services
         private async Task<string> GenerateWorldDescriptionAsync(WorldGenerationParameters parameters)
         {
             var description = $"The world of {parameters.WorldName} is a unique realm where ";
-            
+
             if (parameters.MagicLevel > 7)
                 description += "ancient magic flows through every corner, ";
             else if (parameters.MagicLevel > 3)
@@ -199,7 +199,7 @@ namespace mdl.world.Services
         private async Task<string> GenerateDetailedWorldDescriptionAsync(WorldGenerationParameters parameters, CompleteWorldRequest request)
         {
             var description = $"The vast world of {parameters.WorldName} is a {request.WorldScale.ToLower()} realm that spans ";
-            
+
             if (request.WorldScale == "Interplanetary")
                 description += "multiple worlds and star systems, ";
             else if (request.WorldScale == "Global")
@@ -273,7 +273,7 @@ namespace mdl.world.Services
         private WorldInfo GenerateEnhancedWorldInfo(WorldGenerationParameters parameters, CompleteWorldRequest request)
         {
             var worldInfo = GenerateWorldInfo(parameters);
-            
+
             // Add custom settings from the request
             if (request.CustomSettings != null)
             {
@@ -299,10 +299,10 @@ namespace mdl.world.Services
         private async Task GenerateHierarchicalPlacesAsync(World world, WorldGenerationParameters parameters, CompleteWorldRequest request)
         {
             // Generate places with hierarchical structure using existing logic
-            var totalPlaces = request.ContinentCount + request.CountryCount + request.RegionCount + 
-                             request.CityCount + request.TownCount + request.VillageCount + 
+            var totalPlaces = request.ContinentCount + request.CountryCount + request.RegionCount +
+                             request.CityCount + request.TownCount + request.VillageCount +
                              request.DungeonCount + request.NaturalFeatureCount;
-            
+
             // Use the existing place generation logic
             var tempParameters = new WorldGenerationParameters
             {
@@ -321,7 +321,7 @@ namespace mdl.world.Services
         private async Task GenerateSpecificPlacesAsync(World world, WorldGenerationParameters parameters, CompleteWorldRequest request)
         {
             var totalPlaces = request.TotalPlaces;
-            
+
             var tempParameters = new WorldGenerationParameters
             {
                 WorldName = parameters.WorldName,
@@ -389,7 +389,7 @@ namespace mdl.world.Services
             for (int i = 0; i < count; i++)
             {
                 Equipment equipment;
-                
+
                 if (_random.Next(1, 3) == 1)
                 {
                     equipment = new Weapon
@@ -505,7 +505,7 @@ namespace mdl.world.Services
         private async Task GenerateSpecificTechnologyAsync(World world, WorldGenerationParameters parameters, int count)
         {
             var techTypes = Enum.GetValues<TechSpecType>();
-            
+
             for (int i = 0; i < count; i++)
             {
                 var techSpec = new TechnicalSpecification
@@ -532,7 +532,7 @@ namespace mdl.world.Services
         {
             // Generate trade routes and connections between places
             var places = world.Places.ToList();
-            
+
             foreach (var place in places)
             {
                 if (place.CustomProperties == null)
@@ -540,7 +540,7 @@ namespace mdl.world.Services
 
                 var connections = new List<string>();
                 var connectionCount = _random.Next(1, 5);
-                
+
                 for (int i = 0; i < connectionCount && i < places.Count - 1; i++)
                 {
                     var connectedPlace = places[_random.Next(places.Count)];
@@ -585,7 +585,7 @@ namespace mdl.world.Services
         private async Task GeneratePlacesAsync(World world, WorldGenerationParameters parameters)
         {
             var placesToGenerate = parameters.WorldSize;
-            
+
             for (int i = 0; i < placesToGenerate; i++)
             {
                 var place = new Place
@@ -626,7 +626,7 @@ namespace mdl.world.Services
         private async Task GenerateCharactersAsync(World world, WorldGenerationParameters parameters)
         {
             var charactersToGenerate = Math.Min(parameters.WorldSize / 2, 15);
-            
+
             for (int i = 0; i < charactersToGenerate; i++)
             {
                 var character = new HistoricFigure
@@ -654,7 +654,7 @@ namespace mdl.world.Services
         private async Task GenerateEventsAsync(World world, WorldGenerationParameters parameters)
         {
             var eventsToGenerate = parameters.WorldSize / 3;
-            
+
             for (int i = 0; i < eventsToGenerate; i++)
             {
                 var worldEvent = new WorldEvent
@@ -678,11 +678,11 @@ namespace mdl.world.Services
         private async Task GenerateEquipmentAsync(World world, WorldGenerationParameters parameters)
         {
             var equipmentToGenerate = parameters.WorldSize / 2;
-            
+
             for (int i = 0; i < equipmentToGenerate; i++)
             {
                 Equipment equipment;
-                
+
                 if (_random.Next(1, 3) == 1)
                 {
                     equipment = new Weapon
@@ -806,7 +806,7 @@ namespace mdl.world.Services
 
             var techToGenerate = parameters.TechLevel;
             var techTypes = Enum.GetValues<TechSpecType>();
-            
+
             for (int i = 0; i < techToGenerate; i++)
             {
                 var techSpec = new TechnicalSpecification
@@ -834,7 +834,7 @@ namespace mdl.world.Services
         {
             var prefixes = new[] { "Neo", "Astral", "Cyber", "Quantum", "Mystic", "Stellar", "Arcane", "Tech", "Crystal", "Void" };
             var suffixes = new[] { "Haven", "Citadel", "Nexus", "Spire", "Realm", "Station", "Core", "Gate", "Sanctum", "Hub" };
-            
+
             return $"{prefixes[_random.Next(prefixes.Length)]}{suffixes[_random.Next(suffixes.Length)]}";
         }
 
@@ -848,7 +848,7 @@ namespace mdl.world.Services
                 "An otherworldly location where spells are cast through neural interfaces",
                 "A hidden sanctuary where magical creatures coexist with AI constructs"
             };
-            
+
             return descriptions[_random.Next(descriptions.Length)];
         }
 
@@ -861,12 +861,12 @@ namespace mdl.world.Services
         private List<string> GenerateResources(WorldGenerationParameters parameters)
         {
             var resources = new List<string>();
-            var availableResources = new[] 
-            { 
-                "Mana Crystals", "Quantum Ore", "Mythril", "Data Fragments", "Ether Gas", 
-                "Nano-materials", "Enchanted Metals", "Bio-fuel", "Temporal Shards", "Psionic Stones" 
+            var availableResources = new[]
+            {
+                "Mana Crystals", "Quantum Ore", "Mythril", "Data Fragments", "Ether Gas",
+                "Nano-materials", "Enchanted Metals", "Bio-fuel", "Temporal Shards", "Psionic Stones"
             };
-            
+
             var resourceCount = _random.Next(1, 4);
             for (int i = 0; i < resourceCount; i++)
             {
@@ -874,16 +874,16 @@ namespace mdl.world.Services
                 if (!resources.Contains(resource))
                     resources.Add(resource);
             }
-            
+
             return resources;
         }
 
         private string GenerateGovernmentType()
         {
-            var governments = new[] 
-            { 
-                "Techno-Monarchy", "Mage Council", "AI Democracy", "Corporate Federation", 
-                "Quantum Republic", "Arcane Empire", "Digital Commune", "Hybrid Oligarchy" 
+            var governments = new[]
+            {
+                "Techno-Monarchy", "Mage Council", "AI Democracy", "Corporate Federation",
+                "Quantum Republic", "Arcane Empire", "Digital Commune", "Hybrid Oligarchy"
             };
             return governments[_random.Next(governments.Length)];
         }
@@ -896,10 +896,10 @@ namespace mdl.world.Services
 
         private Dictionary<string, string> GenerateCustomProperties(WorldGenerationParameters parameters)
         {
-            return new Dictionary<string, string> 
-            { 
-                { "Theme", parameters.Theme }, 
-                { "DangerLevel", _random.Next(1, 10).ToString() } 
+            return new Dictionary<string, string>
+            {
+                { "Theme", parameters.Theme },
+                { "DangerLevel", _random.Next(1, 10).ToString() }
             };
         }
 
@@ -907,16 +907,16 @@ namespace mdl.world.Services
         {
             var firstNames = new[] { "Zara", "Kai", "Nova", "Orion", "Luna", "Axel", "Vera", "Cyrus", "Aria", "Neon" };
             var lastNames = new[] { "Starweaver", "Cybermage", "Quantumborn", "Techbane", "Voidwalker", "Dataforge", "Spellcode", "Netcaster" };
-            
+
             return $"{firstNames[_random.Next(firstNames.Length)]} {lastNames[_random.Next(lastNames.Length)]}";
         }
 
         private string GenerateCharacterTitle(WorldGenerationParameters parameters)
         {
-            var titles = new[] 
-            { 
+            var titles = new[]
+            {
                 "Quantum Sorcerer", "Cyber-Paladin", "Techno-Druid", "Digital Necromancer",
-                "Mecha-Ranger", "Data-Witch", "Nano-Cleric", "Stellar Barbarian" 
+                "Mecha-Ranger", "Data-Witch", "Nano-Cleric", "Stellar Barbarian"
             };
             return titles[_random.Next(titles.Length)];
         }
@@ -931,20 +931,20 @@ namespace mdl.world.Services
                 "A guardian of the balance between magic and machine",
                 "An explorer of the quantum realms and magical dimensions"
             };
-            
+
             return descriptions[_random.Next(descriptions.Length)];
         }
 
         private List<string> GenerateAchievements(WorldGenerationParameters parameters)
         {
             var achievements = new List<string>();
-            var availableAchievements = new[] 
-            { 
+            var availableAchievements = new[]
+            {
                 "Created the first magitech interface", "Discovered quantum-magical resonance",
                 "Established the Cyber-Mage Academy", "Defeated the Rogue AI Overlord",
-                "Opened the first dimensional portal", "Synthesized digital consciousness with magical souls" 
+                "Opened the first dimensional portal", "Synthesized digital consciousness with magical souls"
             };
-            
+
             var achievementCount = _random.Next(1, 4);
             for (int i = 0; i < achievementCount; i++)
             {
@@ -952,140 +952,140 @@ namespace mdl.world.Services
                 if (!achievements.Contains(achievement))
                     achievements.Add(achievement);
             }
-            
+
             return achievements;
         }
 
         // Additional helper methods
-        private string GenerateEventName(WorldGenerationParameters parameters) => 
+        private string GenerateEventName(WorldGenerationParameters parameters) =>
             $"The {_fantasySciFiThemes[_random.Next(_fantasySciFiThemes.Length)]} Incident";
 
-        private string GenerateEventDescription(WorldGenerationParameters parameters) => 
+        private string GenerateEventDescription(WorldGenerationParameters parameters) =>
             "A significant event that shaped the balance between magic and technology in the world.";
 
-        private List<string> GenerateEventParticipantIds(World world) => 
+        private Dictionary<string, string> GenerateEventConsequencesDictionary(WorldGenerationParameters parameters) =>
+            new Dictionary<string, string>
+            {
+                { "Primary", "Changed the fundamental understanding of magitech integration" },
+                { "Secondary", "Established new trade routes between magical and technological regions" }
+            };
+
+        private List<string> GenerateEventParticipantIds(World world) =>
             world.HistoricFigures.Take(_random.Next(1, 4)).Select(f => f.Id).ToList();
 
-        private List<string> GenerateAffectedPlaceIds(World world) => 
+        private List<string> GenerateAffectedPlaceIds(World world) =>
             world.Places.Take(_random.Next(1, 3)).Select(p => p.Id).ToList();
 
-        private Dictionary<string, string> GenerateEventConsequencesDictionary(WorldGenerationParameters parameters) => 
-            new Dictionary<string, string> 
-            { 
-                { "Primary", "Changed the fundamental understanding of magitech integration" }, 
-                { "Secondary", "Established new trade routes between magical and technological regions" } 
-            };
-
-        private PlaceType GeneratePlaceType() => 
+        private PlaceType GeneratePlaceType() =>
             new[] { PlaceType.City, PlaceType.Town, PlaceType.Village, PlaceType.NaturalFeature, PlaceType.Dungeon, PlaceType.Other }[_random.Next(6)];
 
-        private string GenerateTerrain(WorldGenerationParameters parameters) => 
+        private string GenerateTerrain(WorldGenerationParameters parameters) =>
             _biomes[_random.Next(_biomes.Length)];
 
-        private string[] GenerateBorders() => 
+        private string[] GenerateBorders() =>
             new[] { "Mystic River", "Quantum Mountains", "Cyber Forest", "Digital Desert" }.Take(_random.Next(0, 3)).ToArray();
 
-        private Dictionary<string, int> GenerateRaceDistribution() => 
-            new Dictionary<string, int> 
-            { 
-                { "Cyber-Elves", _random.Next(10, 40) }, 
-                { "Techno-Dwarves", _random.Next(10, 30) }, 
-                { "Quantum Humans", _random.Next(20, 50) } 
+        private Dictionary<string, int> GenerateRaceDistribution() =>
+            new Dictionary<string, int>
+            {
+                { "Cyber-Elves", _random.Next(10, 40) },
+                { "Techno-Dwarves", _random.Next(10, 30) },
+                { "Quantum Humans", _random.Next(20, 50) }
             };
 
-        private List<string> GenerateLanguages() => 
+        private List<string> GenerateLanguages() =>
             new List<string> { "Common", "Cyber-Elven", "Techno-Dwarven", "Quantum Binary" };
 
-        private List<string> GenerateReligions(WorldGenerationParameters parameters) => 
+        private List<string> GenerateReligions(WorldGenerationParameters parameters) =>
             new List<string> { "Church of Digital Harmony", "Quantum Mysticism", "Techno-Druidism" };
 
-        private string GenerateCharacterClass(WorldGenerationParameters parameters) => 
+        private string GenerateCharacterClass(WorldGenerationParameters parameters) =>
             new[] { "Cyber-Paladin", "Techno-Wizard", "Quantum Ranger", "Bio-Cleric", "Data-Rogue" }[_random.Next(5)];
 
-        private List<string> GenerateAssociatedPlaceIds(World world) => 
+        private List<string> GenerateAssociatedPlaceIds(World world) =>
             world.Places.Take(_random.Next(1, 3)).Select(p => p.Id).ToList();
 
-        private Dictionary<string, int> GenerateAttributes() => 
-            new Dictionary<string, int> 
-            { 
-                { "Strength", _random.Next(8, 18) }, 
-                { "Intelligence", _random.Next(8, 18) }, 
-                { "Charisma", _random.Next(8, 18) } 
+        private Dictionary<string, int> GenerateAttributes() =>
+            new Dictionary<string, int>
+            {
+                { "Strength", _random.Next(8, 18) },
+                { "Intelligence", _random.Next(8, 18) },
+                { "Charisma", _random.Next(8, 18) }
             };
 
-        private List<string> GenerateRelationshipIds(World world) => 
+        private List<string> GenerateRelationshipIds(World world) =>
             world.HistoricFigures.Take(_random.Next(0, 3)).Select(f => f.Id).ToList();
 
-        private string GenerateWeaponName(WorldGenerationParameters parameters) => 
+        private string GenerateWeaponName(WorldGenerationParameters parameters) =>
             $"{new[] { "Plasma", "Quantum", "Mana", "Cyber", "Bio" }[_random.Next(5)]} {new[] { "Sword", "Axe", "Rifle", "Staff", "Blade" }[_random.Next(5)]}";
 
-        private string GenerateMagicalArtifactName(WorldGenerationParameters parameters) => 
+        private string GenerateMagicalArtifactName(WorldGenerationParameters parameters) =>
             $"{new[] { "Orb", "Amulet", "Crown", "Ring", "Scepter" }[_random.Next(5)]} of {_fantasySciFiThemes[_random.Next(_fantasySciFiThemes.Length)]}";
 
-        private string GenerateEquipmentDescription(WorldGenerationParameters parameters) => 
+        private string GenerateEquipmentDescription(WorldGenerationParameters parameters) =>
             "A masterwork fusion of magical enchantment and technological innovation.";
 
-        private string GenerateEquipmentMaterial(WorldGenerationParameters parameters) => 
+        private string GenerateEquipmentMaterial(WorldGenerationParameters parameters) =>
             new[] { "Quantum Steel", "Mithril Alloy", "Bio-Metal", "Crystal Matrix", "Nano-Carbon" }[_random.Next(5)];
 
-        private List<string> GenerateEquipmentHistory(WorldGenerationParameters parameters) => 
+        private List<string> GenerateEquipmentHistory(WorldGenerationParameters parameters) =>
             new List<string> { "Forged during the Great Convergence", "Enhanced with alien technology", "Blessed by digital spirits" };
 
-        private Dictionary<string, int> GenerateEquipmentProperties(WorldGenerationParameters parameters) => 
-            new Dictionary<string, int> 
-            { 
-                { "Durability", _random.Next(50, 100) }, 
-                { "Power", _random.Next(1, 20) }, 
-                { "Efficiency", _random.Next(70, 100) } 
+        private Dictionary<string, int> GenerateEquipmentProperties(WorldGenerationParameters parameters) =>
+            new Dictionary<string, int>
+            {
+                { "Durability", _random.Next(50, 100) },
+                { "Power", _random.Next(1, 20) },
+                { "Efficiency", _random.Next(70, 100) }
             };
 
-        private string GenerateDamageType(WorldGenerationParameters parameters) => 
+        private string GenerateDamageType(WorldGenerationParameters parameters) =>
             new[] { "Physical", "Energy", "Magical", "Plasma", "Quantum", "Psychic" }[_random.Next(6)];
 
-        private List<string> GenerateEnchantments(WorldGenerationParameters parameters) => 
+        private List<string> GenerateEnchantments(WorldGenerationParameters parameters) =>
             new List<string> { "Self-Repair Protocol", "Adaptive Resistance", "Neural Sync" };
 
-        private List<string> GenerateArtifactSpells(WorldGenerationParameters parameters) => 
+        private List<string> GenerateArtifactSpells(WorldGenerationParameters parameters) =>
             new List<string> { "Quantum Bolt", "Mana Shield", "Digital Telepathy", "Cyber Healing" };
 
-        private string GenerateSpellBookName(WorldGenerationParameters parameters) => 
+        private string GenerateSpellBookName(WorldGenerationParameters parameters) =>
             $"The {_fantasySciFiThemes[_random.Next(_fantasySciFiThemes.Length)]} Codex";
 
-        private string GenerateSpellBookDescription(WorldGenerationParameters parameters) => 
+        private string GenerateSpellBookDescription(WorldGenerationParameters parameters) =>
             "A comprehensive guide to integrating magical theory with technological applications.";
 
-        private string GenerateAncientLanguage() => 
+        private string GenerateAncientLanguage() =>
             new[] { "Quantum Runic", "Binary Mystical", "Cyber-Elven", "Techno-Draconic", "Digital Celestial" }[_random.Next(5)];
 
-        private string GenerateRuneName(WorldGenerationParameters parameters) => 
+        private string GenerateRuneName(WorldGenerationParameters parameters) =>
             $"Rune of {new[] { "Quantum", "Cyber", "Stellar", "Nano", "Bio" }[_random.Next(5)]} {new[] { "Power", "Harmony", "Interface", "Synthesis", "Resonance" }[_random.Next(5)]}";
 
-        private string GenerateRuneDescription(WorldGenerationParameters parameters) => 
+        private string GenerateRuneDescription(WorldGenerationParameters parameters) =>
             "A mystical symbol that bridges the gap between magical energy and digital processing.";
 
-        private string GenerateRuneSymbol() => 
+        private string GenerateRuneSymbol() =>
             new[] { "◊◊◊", "▲▼▲", "◈◈◈", "◇◆◇", "▣▣▣" }[_random.Next(5)];
 
-        private string GenerateRuneElement() => 
+        private string GenerateRuneElement() =>
             new[] { "Fire", "Water", "Air", "Earth", "Quantum", "Digital", "Bio", "Cyber" }[_random.Next(8)];
 
-        private List<string> GenerateRuneEffects(WorldGenerationParameters parameters) => 
+        private List<string> GenerateRuneEffects(WorldGenerationParameters parameters) =>
             new List<string> { "Enhances cyber-magical integration", "Boosts quantum processing", "Stabilizes dimensional rifts" };
 
-        private string GenerateActivationCondition() => 
+        private string GenerateActivationCondition() =>
             new[] { "Touch", "Spoken Command", "Mental Focus", "Cybernetic Interface", "Magical Resonance" }[_random.Next(5)];
 
-        private string GenerateAlchemyRecipeName(WorldGenerationParameters parameters) => 
+        private string GenerateAlchemyRecipeName(WorldGenerationParameters parameters) =>
             $"Potion of {new[] { "Cyber", "Quantum", "Stellar", "Bio", "Nano" }[_random.Next(5)]} {new[] { "Enhancement", "Synthesis", "Resonance", "Integration", "Awakening" }[_random.Next(5)]}";
 
-        private string GenerateAlchemyRecipeDescription(WorldGenerationParameters parameters) => 
+        private string GenerateAlchemyRecipeDescription(WorldGenerationParameters parameters) =>
             "A carefully crafted blend of magical essences and technological components.";
 
         private List<Ingredient> GenerateAlchemyIngredients(WorldGenerationParameters parameters)
         {
             var ingredients = new List<Ingredient>();
             var ingredientNames = new[] { "Quantum Moss", "Cyber-Herb", "Liquid Mana", "Nano-Particles", "Stellar Dew" };
-            
+
             for (int i = 0; i < _random.Next(3, 6); i++)
             {
                 ingredients.Add(new Ingredient
@@ -1098,68 +1098,68 @@ namespace mdl.world.Services
                     Properties = new List<string> { "Magical", "Technological", "Rare" }
                 });
             }
-            
+
             return ingredients;
         }
 
-        private List<string> GenerateAlchemySteps(WorldGenerationParameters parameters) => 
+        private List<string> GenerateAlchemySteps(WorldGenerationParameters parameters) =>
             new List<string> { "Combine base ingredients", "Heat to 100°C", "Add magical catalyst", "Stir with enchanted rod", "Cool slowly" };
 
-        private List<string> GenerateAlchemyEffects(WorldGenerationParameters parameters) => 
+        private List<string> GenerateAlchemyEffects(WorldGenerationParameters parameters) =>
             new List<string> { "Temporary cyber-magical abilities", "Enhanced neural processing", "Dimensional sight" };
 
-        private List<string> GenerateAlchemySideEffects() => 
+        private List<string> GenerateAlchemySideEffects() =>
             new List<string> { "Mild quantum fluctuations", "Temporary digital overlay vision" };
 
-        private WorldEventType GenerateWorldEventType(WorldGenerationParameters parameters) => 
+        private WorldEventType GenerateWorldEventType(WorldGenerationParameters parameters) =>
             new[] { WorldEventType.MagicalCatastrophe, WorldEventType.TechnologicalSingularity, WorldEventType.PlaneShift, WorldEventType.TimeDistortion, WorldEventType.Other }[_random.Next(5)];
 
-        private string GenerateTechName(WorldGenerationParameters parameters) => 
+        private string GenerateTechName(WorldGenerationParameters parameters) =>
             $"{new[] { "Quantum", "Nano", "Bio", "Cyber", "Neural" }[_random.Next(5)]}-{new[] { "Processor", "Interface", "Synthesizer", "Amplifier", "Converter" }[_random.Next(5)]}";
 
-        private string GenerateTechDescription(WorldGenerationParameters parameters) => 
+        private string GenerateTechDescription(WorldGenerationParameters parameters) =>
             "Advanced technology enhanced with magical principles for optimal performance.";
 
-        private string GenerateTechManufacturer(WorldGenerationParameters parameters) => 
+        private string GenerateTechManufacturer(WorldGenerationParameters parameters) =>
             $"{new[] { "Quantum", "Stellar", "Cyber", "Mystic", "Nano" }[_random.Next(5)]} {new[] { "Industries", "Corporation", "Technologies", "Dynamics", "Systems" }[_random.Next(5)]}";
 
-        private string GenerateTechModelNumber() => 
+        private string GenerateTechModelNumber() =>
             $"{new[] { "QM", "CT", "NB", "SX", "MZ" }[_random.Next(5)]}-{_random.Next(1000, 9999)}";
 
-        private Dictionary<string, string> GenerateTechSpecifications(WorldGenerationParameters parameters) => 
-            new Dictionary<string, string> 
-            { 
+        private Dictionary<string, string> GenerateTechSpecifications(WorldGenerationParameters parameters) =>
+            new Dictionary<string, string>
+            {
                 { "Processing Power", $"{_random.Next(1, 100)} TeraFLOPS" },
                 { "Mana Capacity", $"{_random.Next(100, 1000)} MP" },
                 { "Quantum Coherence", $"{_random.Next(50, 99)}%" }
             };
 
-        private List<string> GenerateTechRequirements(WorldGenerationParameters parameters) => 
+        private List<string> GenerateTechRequirements(WorldGenerationParameters parameters) =>
             new List<string> { "Quantum Power Source", "Mana Conduit", "Neural Interface" };
 
-        private List<string> GenerateTechCapabilities(WorldGenerationParameters parameters) => 
+        private List<string> GenerateTechCapabilities(WorldGenerationParameters parameters) =>
             new List<string> { "Spell-Code Translation", "Quantum Processing", "Dimensional Scanning" };
 
-        private string GeneratePowerConsumption(WorldGenerationParameters parameters) => 
+        private string GeneratePowerConsumption(WorldGenerationParameters parameters) =>
             $"{_random.Next(10, 500)} Watts + {_random.Next(5, 50)} MP/hour";
 
-        private string GenerateMaintenanceSchedule() => 
+        private string GenerateMaintenanceSchedule() =>
             $"Every {_random.Next(30, 365)} days or {_random.Next(100, 1000)} operating hours";
 
         // Methods for enhancing existing worlds
-        private async Task GenerateAdditionalPlacesAsync(World world) => 
+        private async Task GenerateAdditionalPlacesAsync(World world) =>
             await GeneratePlacesAsync(world, new WorldGenerationParameters { WorldSize = 5 });
 
-        private async Task GenerateAdditionalCharactersAsync(World world) => 
+        private async Task GenerateAdditionalCharactersAsync(World world) =>
             await GenerateCharactersAsync(world, new WorldGenerationParameters { WorldSize = 6 });
 
-        private async Task GenerateAdditionalEventsAsync(World world) => 
+        private async Task GenerateAdditionalEventsAsync(World world) =>
             await GenerateEventsAsync(world, new WorldGenerationParameters { WorldSize = 6 });
 
-        private async Task GenerateAdditionalTechnologyAsync(World world) => 
+        private async Task GenerateAdditionalTechnologyAsync(World world) =>
             await GenerateTechnologyAsync(world, new WorldGenerationParameters { TechLevel = 5 });
 
-        private async Task GenerateAdditionalMagicAsync(World world) => 
+        private async Task GenerateAdditionalMagicAsync(World world) =>
             await GenerateMagicAsync(world, new WorldGenerationParameters { MagicLevel = 5 });
 
         // Helper methods for complete world generation
