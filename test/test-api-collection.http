@@ -1,0 +1,422 @@
+### Fantasy World Generator API Test Collection
+### Complete test suite for all API endpoints
+### Run these tests with VS Code REST Client extension or similar HTTP tools
+
+### NOTE: Update the port below to match your launchSettings.json
+### Check mdl.world/Properties/launchSettings.json for the correct applicationUrl port
+@baseUrl = http://localhost:6000
+@contentType = application/json
+
+### ========================================
+### 1. INFRASTRUCTURE TESTS
+### ========================================
+
+### Test 1.1: Health Check - Get Available Themes
+GET {{baseUrl}}/world/themes
+Content-Type: {{contentType}}
+
+###
+
+### Test 1.2: Get World Templates
+GET {{baseUrl}}/world/templates
+Content-Type: {{contentType}}
+
+###
+
+### Test 1.3: Get All Existing Worlds
+GET {{baseUrl}}/world
+Content-Type: {{contentType}}
+
+###
+
+### ========================================
+### 2. BASIC WORLD GENERATION TESTS
+### ========================================
+
+### Test 2.1: Basic World Generation - Fantasy-SciFi
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Aethermoor-Test",
+  "theme": "Fantasy-SciFi",
+  "techLevel": 7,
+  "magicLevel": 8
+}
+
+###
+
+### Test 2.2: Basic World Generation - Cyberpunk-Fantasy
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "NeoArcadia",
+  "theme": "Cyberpunk-Fantasy",
+  "techLevel": 9,
+  "magicLevel": 6
+}
+
+###
+
+### Test 2.3: Basic World Generation - Quantum-Mystical
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "QuantumRealm",
+  "theme": "Quantum-Mystical",
+  "techLevel": 10,
+  "magicLevel": 9
+}
+
+###
+
+### ========================================
+### 3. CUSTOM WORLD GENERATION TESTS
+### ========================================
+
+### Test 3.1: Custom World Generation - Detailed Parameters
+POST {{baseUrl}}/world/generate-custom
+Content-Type: {{contentType}}
+
+{
+  "worldName": "CustomTestWorld",
+  "theme": "Techno-Druidism",
+  "techLevel": 6,
+  "magicLevel": 9,
+  "worldSize": 30,
+  "includeMagicTech": true,
+  "includeSpaceTravel": false,
+  "includeAncientRuins": true,
+  "preferredBiomes": ["Bio-Mechanical Jungles", "Mystical Data Centers"],
+  "preferredRaces": ["Techno-Dwarves", "Cyber-Elves"],
+  "difficultyLevel": "Medium"
+}
+
+###
+
+### Test 3.2: Custom World Generation - Bio-Magical
+POST {{baseUrl}}/world/generate-custom
+Content-Type: {{contentType}}
+
+{
+  "worldName": "BioMysticWorld",
+  "theme": "Bio-Magical",
+  "techLevel": 5,
+  "magicLevel": 8,
+  "worldSize": 25,
+  "includeMagicTech": true,
+  "includeSpaceTravel": true,
+  "includeAncientRuins": true,
+  "preferredBiomes": ["Enchanted Crystal Forests", "Quantum Beaches"],
+  "preferredRaces": ["Magical Androids", "Bio-Enhanced Orcs"],
+  "difficultyLevel": "Hard"
+}
+
+###
+
+### ========================================
+### 4. WORLD MANAGEMENT TESTS
+### ========================================
+
+### Test 4.1: Get Specific World (Replace {worldId} with actual ID from generation)
+GET {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90
+Content-Type: {{contentType}}
+
+###
+
+### Test 4.2: Enhance World - Add Characters
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Enhanced Aethermoor",
+  "contentType": "characters"
+}
+
+###
+
+### Test 4.3: Enhance World - Add Places
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Enhanced Aethermoor Places",
+  "contentType": "places"
+}
+
+###
+
+### Test 4.4: Enhance World - Add Events
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Enhanced Aethermoor Events",
+  "contentType": "events"
+}
+
+###
+
+### Test 4.5: Enhance World - Add Technology
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Enhanced Aethermoor Tech",
+  "contentType": "technology"
+}
+
+###
+
+### Test 4.6: Enhance World - Add Magic
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Enhanced Aethermoor Magic",
+  "contentType": "magic"
+}
+
+###
+
+### Test 4.7: Enhance World - All Content
+POST {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Fully Enhanced Aethermoor",
+  "contentType": "all"
+}
+
+###
+
+### ========================================
+### 5. LLM TEXT GENERATION TESTS
+### ========================================
+
+### Test 5.1: Generate Text from JSON Data
+POST {{baseUrl}}/api/textgeneration/generate-from-json
+Content-Type: {{contentType}}
+
+{
+  "jsonData": {
+    "name": "Test World",
+    "description": "A magical realm",
+    "places": [
+      {"name": "Crystal Tower", "type": "Magical"},
+      {"name": "Cyber City", "type": "Technological"}
+    ]
+  },
+  "prompt": "Create a vivid description of this fantasy world focusing on the contrast between magic and technology"
+}
+
+###
+
+### Test 5.2: Generate World Narrative
+POST {{baseUrl}}/api/textgeneration/generate-world-narrative
+Content-Type: {{contentType}}
+
+"TestNarrativeWorld"
+
+###
+
+### ========================================
+### 6. WORLD ENHANCEMENT SERVICE TESTS
+### ========================================
+
+### Test 6.1: World Enhancement Service - Add Magical Academies
+POST {{baseUrl}}/api/worldenhancement/enhance
+Content-Type: {{contentType}}
+
+{
+  "world": {
+    "id": "test-world-id",
+    "name": "Test Enhancement World",
+    "description": "A world for testing enhancements",
+    "worldInfo": {
+      "genre": "Fantasy-SciFi",
+      "magicLevel": "High",
+      "technologyLevel": "Advanced"
+    },
+    "places": [],
+    "historicFigures": [],
+    "worldEvents": [],
+    "equipment": []
+  },
+  "userComment": "Add more magical academies and cyber-enhancement facilities. Include floating cities and underground tech labs.",
+  "targetSection": "places"
+}
+
+###
+
+### Test 6.2: World Enhancement Service - Character Development
+POST {{baseUrl}}/api/worldenhancement/enhance
+Content-Type: {{contentType}}
+
+{
+  "world": {
+    "id": "test-world-id-2",
+    "name": "Character Enhancement Test",
+    "description": "Testing character enhancement",
+    "worldInfo": {
+      "genre": "Cyberpunk-Fantasy",
+      "magicLevel": "Medium",
+      "technologyLevel": "High"
+    },
+    "places": [
+      {"name": "Neo Tokyo", "type": "City"}
+    ],
+    "historicFigures": [],
+    "worldEvents": [],
+    "equipment": []
+  },
+  "userComment": "Create legendary heroes who bridge magic and technology. Include cyber-mages and techno-druids with interesting backstories.",
+  "targetSection": "characters"
+}
+
+###
+
+### ========================================
+### 7. EDGE CASE AND ERROR TESTS
+### ========================================
+
+### Test 7.1: Invalid World ID
+GET {{baseUrl}}/world/invalid-world-id-12345
+Content-Type: {{contentType}}
+
+###
+
+### Test 7.2: Empty Generation Request
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{}
+
+###
+
+### Test 7.3: Invalid Theme
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "InvalidThemeTest",
+  "theme": "NonExistentTheme",
+  "techLevel": 5,
+  "magicLevel": 5
+}
+
+###
+
+### Test 7.4: Invalid Tech/Magic Levels
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "InvalidLevelsTest",
+  "theme": "Fantasy-SciFi",
+  "techLevel": 15,
+  "magicLevel": -5
+}
+
+###
+
+### Test 7.5: Missing Required Fields
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "theme": "Fantasy-SciFi"
+}
+
+###
+
+### Test 7.6: Enhance Non-Existent World
+POST {{baseUrl}}/world/non-existent-world-id/enhance
+Content-Type: {{contentType}}
+
+{
+  "worldName": "Non-existent Enhancement",
+  "contentType": "characters"
+}
+
+###
+
+### ========================================
+### 8. PERFORMANCE TESTS
+### ========================================
+
+### Test 8.1: Large World Generation
+POST {{baseUrl}}/world/generate-custom
+Content-Type: {{contentType}}
+
+{
+  "worldName": "LargeTestWorld",
+  "theme": "Fantasy-SciFi",
+  "techLevel": 8,
+  "magicLevel": 8,
+  "worldSize": 50,
+  "includeMagicTech": true,
+  "includeSpaceTravel": true,
+  "includeAncientRuins": true,
+  "preferredBiomes": [
+    "Bio-Mechanical Jungles",
+    "Mystical Data Centers", 
+    "Quantum Beaches",
+    "Cyber-Punk Cities",
+    "Enchanted Crystal Forests"
+  ],
+  "preferredRaces": [
+    "Cyber-Elves",
+    "Techno-Dwarves",
+    "Quantum Humans",
+    "Magical Androids",
+    "Bio-Enhanced Orcs"
+  ],
+  "difficultyLevel": "Expert"
+}
+
+###
+
+### ========================================
+### 9. CLEANUP TESTS (OPTIONAL)
+### ========================================
+
+### Test 9.1: Delete Test World (Replace {worldId} with actual ID)
+DELETE {{baseUrl}}/world/e0498e2f-3343-42e8-82fb-37d7c2c4da90
+Content-Type: {{contentType}}
+
+###
+
+### ========================================
+### 10. INTEGRATION TESTS
+### ========================================
+
+### Test 10.1: Complete Workflow - Generate, Retrieve, Enhance, Delete
+### Step 1: Generate
+POST {{baseUrl}}/world/generate
+Content-Type: {{contentType}}
+
+{
+  "worldName": "WorkflowTest",
+  "theme": "Space-Magic",
+  "techLevel": 9,
+  "magicLevel": 7
+}
+
+### Step 2: Copy the ID from the response above and use it in the next requests
+### Step 3: Retrieve the generated world
+# GET {{baseUrl}}/world/{GENERATED_ID}
+
+### Step 4: Enhance the world
+# POST {{baseUrl}}/world/{GENERATED_ID}/enhance
+# {
+#   "worldName": "Enhanced WorkflowTest",
+#   "contentType": "all"
+# }
+
+### Step 5: Delete the test world
+# DELETE {{baseUrl}}/world/{GENERATED_ID}
+
+###

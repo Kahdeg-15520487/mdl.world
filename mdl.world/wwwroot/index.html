@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Optional: Set API base URL via meta tag -->
+    <!-- <meta name="api-base-url" content="http://your-api-server:5000"> -->
     <title>Fantasy World Generator</title>
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -274,6 +276,7 @@
             <button class="tab active" onclick="showTab('generate')">Generate World</button>
             <button class="tab" onclick="showTab('manage')">My Worlds</button>
             <button class="tab" onclick="showTab('wiki')">View Wiki</button>
+            <button class="tab" onclick="showTab('config')">Settings</button>
         </div>
 
         <div class="tab-content">
@@ -425,12 +428,169 @@
 
                 <iframe id="wikiFrame" class="wiki-frame hidden"></iframe>
             </div>
+
+            <!-- Configuration Tab -->
+            <div id="config-tab" class="tab-panel">
+                <h2>⚙️ Settings</h2>
+                
+                <div class="form-group">
+                    <label>API Configuration</label>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <p><strong>Current API Base URL:</strong></p>
+                        <code id="currentApiUrl" style="background: #e9ecef; padding: 5px 10px; border-radius: 4px; display: inline-block; margin: 10px 0;">Loading...</code>
+                        <p style="font-size: 0.9rem; color: #6c757d; margin-top: 10px;">
+                            The API URL can be configured in several ways (in order of priority):
+                        </p>
+                        <ul style="font-size: 0.9rem; color: #6c757d; margin-top: 5px; padding-left: 20px;">
+                            <li>URL parameter: <code>?api=http://your-server:5000</code></li>
+                            <li>Meta tag in HTML head</li>
+                            <li>Local storage (set below)</li>
+                            <li>Auto-detection based on current host</li>
+                            <li>Default fallback: http://localhost:5000</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-row">
+                        <button class="btn" onclick="showApiConfig()">🔧 Change API URL</button>
+                        <button class="btn btn-secondary" onclick="resetApiConfig()">🔄 Reset to Auto</button>
+                        <button class="btn btn-secondary" onclick="testApiConnection()">🔍 Test Connection</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Quick API Presets</label>
+                    <div class="form-row">
+                        <button class="btn btn-secondary" onclick="setApiUrl('http://localhost:5000')">Local Development</button>
+                        <button class="btn btn-secondary" onclick="setApiUrl('http://localhost:5001')">Alt Port 5001</button>
+                        <button class="btn btn-secondary" onclick="setApiUrl('https://api.yourdomain.com')">Production</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Application Info</label>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <p><strong>Fantasy World Generator</strong></p>
+                        <p>Create, manage, and explore rich fantasy worlds with magic and technology</p>
+                        <p style="font-size: 0.9rem; color: #6c757d; margin-top: 10px;">
+                            <strong>Features:</strong> Dynamic API configuration, Local storage, Auto-detection
+                        </p>
+                    </div>
+                </div>
+
+                <div id="configResult"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:5000';
+        // Configuration system for API base URL
+        function getApiBaseUrl() {
+            // Priority order:
+            // 1. URL parameter (e.g., ?api=http://localhost:5001)
+            // 2. Environment variable (if available through meta tag)
+            // 3. Local storage setting
+            // 4. Current host detection
+            // 5. Default fallback
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const apiParam = urlParams.get('api');
+            if (apiParam) {
+                localStorage.setItem('apiBaseUrl', apiParam);
+                return apiParam;
+            }
+            
+            // Check for environment variable through meta tag
+            const apiMeta = document.querySelector('meta[name="api-base-url"]');
+            if (apiMeta && apiMeta.content) {
+                return apiMeta.content;
+            }
+            
+            // Check local storage
+            const storedApi = localStorage.getItem('apiBaseUrl');
+            if (storedApi) {
+                return storedApi;
+            }
+            
+            // Auto-detect based on current location
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                // If we're not on localhost, try to use the same host with different port
+                const protocol = window.location.protocol;
+                const hostname = window.location.hostname;
+                return `${protocol}//${hostname}:5000`;
+            }
+            
+            // Default fallback
+            return 'http://localhost:5000';
+        }
+
+        const API_BASE = getApiBaseUrl();
         let currentWorlds = [];
+
+        // Configuration UI functions
+        function showApiConfig() {
+            const currentApi = API_BASE;
+            const newApi = prompt(`Current API Base URL: ${currentApi}\n\nEnter new API Base URL:`, currentApi);
+            if (newApi && newApi !== currentApi) {
+                localStorage.setItem('apiBaseUrl', newApi);
+                alert('API URL updated! Please refresh the page to apply changes.');
+            }
+        }
+
+        function resetApiConfig() {
+            localStorage.removeItem('apiBaseUrl');
+            alert('API configuration reset! Please refresh the page to apply changes.');
+        }
+
+        function setApiUrl(url) {
+            localStorage.setItem('apiBaseUrl', url);
+            alert(`API URL set to: ${url}\nPlease refresh the page to apply changes.`);
+        }
+
+        async function testApiConnection() {
+            const result = document.getElementById('configResult');
+            result.innerHTML = '<div class="loading">Testing API connection...</div>';
+            
+            try {
+                const response = await fetch(API_BASE + '/World', {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Connection Successful</h3>
+                            <p>Successfully connected to API at: <strong>${API_BASE}</strong></p>
+                            <p>Response status: ${response.status} ${response.statusText}</p>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <h3>⚠️ Connection Issues</h3>
+                            <p>API responded but with error status: ${response.status} ${response.statusText}</p>
+                            <p>URL: ${API_BASE}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Failed</h3>
+                        <p>Could not connect to API at: <strong>${API_BASE}</strong></p>
+                        <p>Error: ${error.message}</p>
+                        <p>Make sure the API server is running and accessible.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateConfigDisplay() {
+            const apiUrlElement = document.getElementById('currentApiUrl');
+            if (apiUrlElement) {
+                apiUrlElement.textContent = API_BASE;
+            }
+        }
 
         // Tab Management
         function showTab(tabName) {
@@ -455,6 +615,8 @@
                 loadWorlds();
             } else if (tabName === 'wiki') {
                 loadWikiWorldOptions();
+            } else if (tabName === 'config') {
+                updateConfigDisplay();
             }
         }
 
@@ -809,10 +971,34 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateRangeValue('techLevel');
             updateRangeValue('magicLevel');
+            updateConfigDisplay();
             
             // Set up wiki type change handler
             document.getElementById('wikiType').addEventListener('change', loadWikiOptions);
+            
+            // Log current API configuration for debugging
+            console.log('Fantasy World Generator initialized');
+            console.log('API Base URL:', API_BASE);
+            console.log('Configuration source:', getConfigurationSource());
         });
+
+        function getConfigurationSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const apiParam = urlParams.get('api');
+            if (apiParam) return 'URL Parameter';
+            
+            const apiMeta = document.querySelector('meta[name="api-base-url"]');
+            if (apiMeta && apiMeta.content) return 'Meta Tag';
+            
+            const storedApi = localStorage.getItem('apiBaseUrl');
+            if (storedApi) return 'Local Storage';
+            
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                return 'Auto-detected Host';
+            }
+            
+            return 'Default Fallback';
+        }
     </script>
     <script src="app.js"></script>
 </body>

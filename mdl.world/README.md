@@ -185,3 +185,47 @@ The world generation uses sophisticated algorithms to ensure:
 - **Variety**: Each generation produces unique, interesting content
 - **Balance**: Magic and technology levels are properly balanced
 - **Replayability**: Same parameters can produce different but equally valid worlds
+
+## 🧪 Testing
+
+The service includes a comprehensive test suite to validate all functionality:
+
+### Quick Testing
+```bash
+# Run quick validation tests
+.\run-tests.ps1 -Quick
+
+# Or from the test directory
+cd test
+.\test-simple.ps1
+```
+
+### Comprehensive Testing
+```bash
+# Run full test suite
+.\run-tests.ps1
+
+# Or with verbose output
+.\run-tests.ps1 -Verbose
+
+# Or from the test directory
+cd test
+.\test-api-suite.ps1
+```
+
+### Test Coverage
+- ✅ **Infrastructure**: Server health, themes, templates
+- ✅ **World Generation**: Basic and custom world creation
+- ✅ **World Management**: Retrieval, enhancement, storage
+- ✅ **LLM Integration**: Text generation and narratives
+- ✅ **Error Handling**: Invalid requests and edge cases
+- ✅ **Content Validation**: World structure and data integrity
+
+### Test Files Location
+All test files are organized in the `../test/` directory:
+- `test-api-suite.ps1` - Main comprehensive test suite
+- `test-simple.ps1` - Quick validation tests
+- `test-api-collection.http` - HTTP test collection for VS Code
+- `TEST-README.md` - Detailed testing documentation
+
+**Note**: Tests automatically detect the API port from `Properties/launchSettings.json`.
