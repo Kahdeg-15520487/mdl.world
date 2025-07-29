@@ -38,6 +38,36 @@ namespace mdl.world.Controllers
             }
         }
 
+        [HttpGet("health")]
+        public async Task<IActionResult> GetHealth()
+        {
+            try
+            {
+                var health = await _llmService.GetServiceHealthAsync();
+                return Ok(health);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking LLM service health");
+                return StatusCode(500, new { error = "Unable to check service health" });
+            }
+        }
+
+        [HttpGet("available")]
+        public async Task<IActionResult> CheckAvailability()
+        {
+            try
+            {
+                var isAvailable = await _llmService.IsServiceAvailableAsync();
+                return Ok(new { isAvailable = isAvailable });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking LLM service availability");
+                return Ok(new { isAvailable = false });
+            }
+        }
+
         [HttpPost("generate-world-narrative")]
         public async Task<IActionResult> GenerateWorldNarrative([FromBody] string worldName)
         {

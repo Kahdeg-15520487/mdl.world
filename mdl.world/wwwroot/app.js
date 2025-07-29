@@ -1,5 +1,100 @@
 // Enhanced functionality for the World Generator frontend
 
+// LLM Service Status Manager
+class LLMServiceStatus {
+    static isAvailable = false;
+    static lastCheck = null;
+    static checkInterval = null;
+
+    static async checkAvailability() {
+        try {
+            const response = await fetch(`${API_BASE}/TextGeneration/available`);
+            const data = await response.json();
+            this.isAvailable = data.isAvailable;
+            this.lastCheck = new Date();
+            this.updateUI();
+            return this.isAvailable;
+        } catch (error) {
+            console.error('Error checking LLM service availability:', error);
+            this.isAvailable = false;
+            this.updateUI();
+            return false;
+        }
+    }
+
+    static async getDetailedHealth() {
+        try {
+            const response = await fetch(`${API_BASE}/TextGeneration/health`);
+            const health = await response.json();
+            this.isAvailable = health.isAvailable;
+            this.lastCheck = new Date();
+            this.updateUI();
+            return health;
+        } catch (error) {
+            console.error('Error getting LLM service health:', error);
+            this.isAvailable = false;
+            this.updateUI();
+            return null;
+        }
+    }
+
+    static updateUI() {
+        const statusIndicator = document.getElementById('llm-status');
+        if (!statusIndicator) return;
+
+        statusIndicator.className = `status-indicator ${this.isAvailable ? 'available' : 'unavailable'}`;
+        statusIndicator.title = this.isAvailable 
+            ? 'LLM Service Available' 
+            : 'LLM Service Unavailable';
+        
+        // Update any enhancement buttons
+        const enhanceButtons = document.querySelectorAll('.enhance-btn');
+        enhanceButtons.forEach(btn => {
+            btn.disabled = !this.isAvailable;
+            if (!this.isAvailable) {
+                btn.title = 'LLM Service unavailable';
+            }
+        });
+    }
+
+    static startPeriodicCheck(intervalMs = 30000) { // Check every 30 seconds
+        this.stopPeriodicCheck();
+        this.checkAvailability(); // Initial check
+        this.checkInterval = setInterval(() => this.checkAvailability(), intervalMs);
+    }
+
+    static stopPeriodicCheck() {
+        if (this.checkInterval) {
+            clearInterval(this.checkInterval);
+            this.checkInterval = null;
+        }
+    }
+
+    static async showHealthModal() {
+        const health = await this.getDetailedHealth();
+        if (!health) {
+            NotificationManager.error('Could not retrieve service health information');
+            return;
+        }
+
+        const modal = new Modal('LLM Service Health', `
+            <div class="health-info">
+                <div class="health-status ${health.isAvailable ? 'healthy' : 'unhealthy'}">
+                    <h4>Status: ${health.status}</h4>
+                </div>
+                <div class="health-details">
+                    <p><strong>Base URL:</strong> ${health.baseUrl}</p>
+                    <p><strong>Model:</strong> ${health.model}</p>
+                    <p><strong>Response Time:</strong> ${health.responseTimeMs}ms</p>
+                    <p><strong>Last Checked:</strong> ${new Date(health.checkedAt).toLocaleString()}</p>
+                    ${health.errorMessage ? `<p><strong>Error:</strong> ${health.errorMessage}</p>` : ''}
+                </div>
+            </div>
+        `);
+        modal.show();
+    }
+}
+
 class NotificationManager {
     static show(message, type = 'info', duration = 5000) {
         const notification = document.createElement('div');

@@ -28,6 +28,13 @@ namespace mdl.world.Services
         {
             try
             {
+                // Check if service is available before attempting generation
+                if (!await IsServiceAvailableAsync())
+                {
+                    _logger.LogWarning("LLM service is not available. Returning fallback message.");
+                    return "LLM service is currently unavailable. Please check the service connection and try again.";
+                }
+
                 var jsonString = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions 
                 { 
                     WriteIndented = true 
@@ -52,7 +59,7 @@ namespace mdl.world.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error generating text from JSON");
-                return "Unable to generate description at this time.";
+                return "Unable to generate description at this time. Please check the LLM service connection.";
             }
         }
 
@@ -90,6 +97,98 @@ Tell the story of what happened, who was involved, and the impact it had.
 Write in an engaging storytelling style that captures the drama and significance of the event.";
 
             return await GenerateTextFromJsonAsync(eventJson, prompt);
+        }
+
+        public async Task<bool> IsServiceAvailableAsync()
+        {
+            try
+            {
+                var health = await GetServiceHealthAsync();
+                return health.IsAvailable;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<LLMServiceHealth> GetServiceHealthAsync()
+        {
+            var health = new LLMServiceHealth
+            {
+                BaseUrl = _baseUrl,
+                Model = _model,
+                CheckedAt = DateTime.UtcNow
+            };
+
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            try
+            {
+                // Create a simple health check request
+                var healthRequest = new LLMRequest
+                {
+                    Model = _model,
+                    Messages = new List<LLMMessage>
+                    {
+                        new LLMMessage { Role = "user", Content = "ping" }
+                    },
+                    Temperature = 0.1f,
+                    MaxTokens = 10
+                };
+
+                var jsonContent = JsonSerializer.Serialize(healthRequest, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                });
+
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                // Set a shorter timeout for health checks
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                var response = await _httpClient.PostAsync("/v1/chat/completions", httpContent, cts.Token);
+
+                stopwatch.Stop();
+                health.ResponseTimeMs = (int)stopwatch.ElapsedMilliseconds;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    health.IsAvailable = true;
+                    health.Status = "Healthy";
+                }
+                else
+                {
+                    health.IsAvailable = false;
+                    health.Status = $"Unhealthy - HTTP {response.StatusCode}";
+                    health.ErrorMessage = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+            {
+                stopwatch.Stop();
+                health.ResponseTimeMs = (int)stopwatch.ElapsedMilliseconds;
+                health.IsAvailable = false;
+                health.Status = "Timeout";
+                health.ErrorMessage = "Service did not respond within timeout period";
+            }
+            catch (HttpRequestException ex)
+            {
+                stopwatch.Stop();
+                health.ResponseTimeMs = (int)stopwatch.ElapsedMilliseconds;
+                health.IsAvailable = false;
+                health.Status = "Connection Error";
+                health.ErrorMessage = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                health.ResponseTimeMs = (int)stopwatch.ElapsedMilliseconds;
+                health.IsAvailable = false;
+                health.Status = "Error";
+                health.ErrorMessage = ex.Message;
+            }
+
+            return health;
         }
 
         private async Task<string> SendLLMRequestAsync(LLMRequest request)

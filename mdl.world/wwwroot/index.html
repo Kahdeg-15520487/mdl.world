@@ -270,6 +270,12 @@
         <div class="header">
             <h1>🌟 Fantasy World Generator</h1>
             <p>Create, manage, and explore rich fantasy worlds with magic and technology</p>
+            <div class="service-status">
+                <div id="llm-status" class="status-indicator unavailable" title="LLM Service Status" onclick="LLMServiceStatus.showHealthModal()">
+                    <span class="status-dot"></span>
+                    <span class="status-text">LLM Service</span>
+                </div>
+            </div>
         </div>
 
         <div class="tabs">
@@ -778,7 +784,7 @@
                     </div>
                     <div class="world-actions">
                         <button class="btn" onclick="viewWorldWiki('${world.id}')">📖 Wiki</button>
-                        <button class="btn btn-secondary" onclick="enhanceWorld('${world.id}')">✨ Enhance</button>
+                        <button class="btn btn-secondary enhance-btn" onclick="enhanceWorld('${world.id}')">✨ Enhance</button>
                         <button class="btn btn-secondary" onclick="copyWorld('${world.id}')">📋 Copy</button>
                         <button class="btn btn-secondary" onclick="exportWorld('${world.id}')">💾 Export</button>
                         <button class="btn btn-danger" onclick="deleteWorld('${world.id}')">🗑️ Delete</button>
@@ -810,6 +816,12 @@
         }
 
         async function enhanceWorld(worldId) {
+            // Check LLM service availability first
+            if (!LLMServiceStatus.isAvailable) {
+                alert('❌ LLM service is currently unavailable. Please check the service status and try again.');
+                return;
+            }
+            
             if (!confirm('Enhance this world with more content?')) return;
             
             const contentType = prompt('What type of content to add?', 'characters');
@@ -975,6 +987,9 @@
             
             // Set up wiki type change handler
             document.getElementById('wikiType').addEventListener('change', loadWikiOptions);
+            
+            // Initialize LLM service status monitoring
+            LLMServiceStatus.startPeriodicCheck();
             
             // Log current API configuration for debugging
             console.log('Fantasy World Generator initialized');
