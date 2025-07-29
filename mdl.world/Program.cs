@@ -45,6 +45,9 @@ namespace mdl.world
                 app.UseDeveloperExceptionPage();
             }
 
+            // Configure default files (serve index.html when accessing root)
+            app.UseDefaultFiles();
+            
             // Enable static files (for the frontend)
             app.UseStaticFiles();
             

@@ -8,6 +8,54 @@
     <title>Fantasy World Generator</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        :root {
+            /* Light theme variables */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --header-gradient-start: #4c63d2;
+            --header-gradient-end: #5a67d8;
+            --tabs-bg: #f8f9fa;
+            --tab-border: #dee2e6;
+            --tab-hover: #e9ecef;
+            --card-bg: white;
+            --card-border: #e9ecef;
+            --card-border-hover: #4c63d2;
+            --input-bg: white;
+            --input-border: #ced4da;
+            --button-bg: #4c63d2;
+            --success-bg: #d4edda;
+            --error-bg: #f8d7da;
+            --config-bg: #f8f9fa;
+            --config-border: #e9ecef;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme variables */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --container-bg: rgba(30, 30, 46, 0.95);
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --header-gradient-start: #2d3748;
+            --header-gradient-end: #1a202c;
+            --tabs-bg: #2d3748;
+            --tab-border: #4a5568;
+            --tab-hover: #4a5568;
+            --card-bg: #2d3748;
+            --card-border: #4a5568;
+            --card-border-hover: #667eea;
+            --input-bg: #2d3748;
+            --input-border: #4a5568;
+            --button-bg: #667eea;
+            --success-bg: #1a2e1a;
+            --error-bg: #2e1a1a;
+            --config-bg: #2d3748;
+            --config-border: #4a5568;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,26 +64,28 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
+            color: var(--text-color);
+            transition: all 0.3s ease;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--container-bg);
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #4c63d2 0%, #5a67d8 100%);
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
@@ -49,10 +99,36 @@
             opacity: 0.9;
         }
 
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1.1rem;
+        }
+
         .tabs {
             display: flex;
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
+            background: var(--tabs-bg);
+            border-bottom: 1px solid var(--tab-border);
         }
 
         .tab {
@@ -63,18 +139,21 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
-            color: #6c757d;
+            color: var(--text-color);
             transition: all 0.3s ease;
+            opacity: 0.7;
         }
 
         .tab.active {
-            background: white;
-            color: #4c63d2;
-            border-bottom: 3px solid #4c63d2;
+            background: var(--card-bg);
+            color: var(--button-bg);
+            border-bottom: 3px solid var(--button-bg);
+            opacity: 1;
         }
 
         .tab:hover {
-            background: #e9ecef;
+            background: var(--tab-hover);
+            opacity: 1;
         }
 
         .tab-content {
@@ -97,21 +176,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            color: var(--text-color);
         }
 
         input, select, textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-color);
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #4c63d2;
+            border-color: var(--button-bg);
             box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
         }
 
@@ -122,7 +203,7 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #4c63d2 0%, #5a67d8 100%);
+            background: linear-gradient(135deg, var(--button-bg) 0%, #5a67d8 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -162,8 +243,8 @@
         }
 
         .world-card {
-            background: white;
-            border: 2px solid #e9ecef;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
             border-radius: 10px;
             padding: 20px;
             transition: all 0.3s ease;
@@ -171,19 +252,19 @@
         }
 
         .world-card:hover {
-            border-color: #4c63d2;
+            border-color: var(--card-border-hover);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .world-card h3 {
-            color: #4c63d2;
+            color: var(--button-bg);
             margin-bottom: 10px;
             font-size: 1.3rem;
         }
 
         .world-card p {
-            color: #6c757d;
+            color: var(--text-secondary);
             margin-bottom: 15px;
             line-height: 1.5;
         }
@@ -194,9 +275,9 @@
             align-items: center;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid var(--card-border);
             font-size: 0.9rem;
-            color: #6c757d;
+            color: var(--text-secondary);
         }
 
         .world-actions {
@@ -214,7 +295,7 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: #6c757d;
+            color: var(--text-secondary);
         }
 
         .loading::after {
@@ -263,11 +344,53 @@
         .hidden {
             display: none;
         }
+
+        .config-info {
+            background: var(--config-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--config-border);
+        }
+
+        .config-info p {
+            color: var(--text-color);
+        }
+
+        .config-info ul {
+            color: var(--text-secondary);
+        }
+
+        .api-url-display {
+            background: var(--config-border);
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 10px 0;
+            color: var(--text-color);
+        }
+
+        .config-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .config-list {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                <span class="theme-toggle-icon">🌙</span>
+                <span>Dark Mode</span>
+            </button>
             <h1>🌟 Fantasy World Generator</h1>
             <p>Create, manage, and explore rich fantasy worlds with magic and technology</p>
             <div class="service-status">
@@ -441,13 +564,13 @@
                 
                 <div class="form-group">
                     <label>API Configuration</label>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div class="config-info">
                         <p><strong>Current API Base URL:</strong></p>
-                        <code id="currentApiUrl" style="background: #e9ecef; padding: 5px 10px; border-radius: 4px; display: inline-block; margin: 10px 0;">Loading...</code>
-                        <p style="font-size: 0.9rem; color: #6c757d; margin-top: 10px;">
+                        <code id="currentApiUrl" class="api-url-display">Loading...</code>
+                        <p class="config-text">
                             The API URL can be configured in several ways (in order of priority):
                         </p>
-                        <ul style="font-size: 0.9rem; color: #6c757d; margin-top: 5px; padding-left: 20px;">
+                        <ul class="config-list">
                             <li>URL parameter: <code>?api=http://your-server:5000</code></li>
                             <li>Meta tag in HTML head</li>
                             <li>Local storage (set below)</li>
@@ -474,10 +597,10 @@
 
                 <div class="form-group">
                     <label>Application Info</label>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <div class="config-info">
                         <p><strong>Fantasy World Generator</strong></p>
                         <p>Create, manage, and explore rich fantasy worlds with magic and technology</p>
-                        <p style="font-size: 0.9rem; color: #6c757d; margin-top: 10px;">
+                        <p class="config-text">
                             <strong>Features:</strong> Dynamic API configuration, Local storage, Auto-detection
                         </p>
                     </div>
@@ -489,6 +612,38 @@
     </div>
 
     <script>
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = html.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                html.removeAttribute('data-theme');
+                themeToggle.innerHTML = '<span class="theme-toggle-icon">🌙</span><span>Dark Mode</span>';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<span class="theme-toggle-icon">☀️</span><span>Light Mode</span>';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<span class="theme-toggle-icon">☀️</span><span>Light Mode</span>';
+            }
+        }
+
+        // Call initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+
         // Configuration system for API base URL
         function getApiBaseUrl() {
             // Priority order:
