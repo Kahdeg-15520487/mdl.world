@@ -3,13 +3,13 @@ using System.Text.Json;
 
 namespace mdl.world.Services
 {
-    public class LLMTextGenerationService : ILLMTextGenerationService
+    public class LLMTextGenerationService : ILLMTextGenerationService, IDisposable
     {
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
         private readonly ILogger<LLMTextGenerationService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _baseUrl;
-        private readonly string _model;
+        private string _baseUrl;
+        private string _model;
 
         public LLMTextGenerationService(HttpClient httpClient, ILogger<LLMTextGenerationService> logger, IConfiguration configuration)
         {
@@ -239,6 +239,55 @@ Write in an engaging storytelling style that captures the drama and significance
             }
 
             return "Unable to generate text at this time. Please check the LLM server connection.";
+        }
+
+        public void UpdateConfiguration(string baseUrl, string? model = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(baseUrl))
+                {
+                    throw new ArgumentException("Base URL cannot be null or empty", nameof(baseUrl));
+                }
+
+                if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out _))
+                {
+                    throw new ArgumentException("Invalid URL format", nameof(baseUrl));
+                }
+
+                _baseUrl = baseUrl;
+                if (!string.IsNullOrWhiteSpace(model))
+                {
+                    _model = model;
+                }
+
+                // Create a new HttpClient instance with updated configuration
+                _httpClient?.Dispose();
+                _httpClient = new HttpClient();
+                _httpClient.BaseAddress = new Uri(_baseUrl);
+                _httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+                _logger.LogInformation("LLM service configuration updated - BaseUrl: {BaseUrl}, Model: {Model}", _baseUrl, _model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating LLM service configuration");
+                throw;
+            }
+        }
+
+        public LLMServiceConfig GetConfiguration()
+        {
+            return new LLMServiceConfig
+            {
+                BaseUrl = _baseUrl,
+                Model = _model
+            };
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace mdl.world
                 .AddCheck<LLMServiceHealthCheck>("llm_service");
             
             // Register HTTP client for LLM service
-            builder.Services.AddHttpClient<ILLMTextGenerationService, LLMTextGenerationService>();
+            builder.Services.AddHttpClient();
             
             // Register world generation service
             builder.Services.AddScoped<IWorldGenerationService, WorldGenerationService>();
@@ -28,8 +28,15 @@ namespace mdl.world
             // Register world storage service
             builder.Services.AddScoped<IWorldStorageService, JsonWorldStorageService>();
             
-            // Register LLM text generation service
-            builder.Services.AddScoped<ILLMTextGenerationService, LLMTextGenerationService>();
+            // Register LLM text generation service as Singleton to persist configuration
+            builder.Services.AddSingleton<ILLMTextGenerationService>(serviceProvider =>
+            {
+                var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+                var logger = serviceProvider.GetRequiredService<ILogger<LLMTextGenerationService>>();
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                var httpClient = httpClientFactory.CreateClient();
+                return new LLMTextGenerationService(httpClient, logger, configuration);
+            });
             
             // Register world enhancement service
             builder.Services.AddScoped<IWorldEnhancementService, WorldEnhancementService>();

@@ -51,6 +51,19 @@ namespace mdl.world.Services
         /// </summary>
         /// <returns>Health status information</returns>
         Task<LLMServiceHealth> GetServiceHealthAsync();
+
+        /// <summary>
+        /// Updates the LLM service configuration
+        /// </summary>
+        /// <param name="baseUrl">New base URL for the LLM service</param>
+        /// <param name="model">New model name (optional)</param>
+        void UpdateConfiguration(string baseUrl, string? model = null);
+
+        /// <summary>
+        /// Gets the current LLM service configuration
+        /// </summary>
+        /// <returns>Current configuration</returns>
+        LLMServiceConfig GetConfiguration();
     }
 
     public class LLMRequest
@@ -97,5 +110,11 @@ namespace mdl.world.Services
         public int ResponseTimeMs { get; set; }
         public string? ErrorMessage { get; set; }
         public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class LLMServiceConfig
+    {
+        public string BaseUrl { get; set; } = "";
+        public string Model { get; set; } = "local-model";
     }
 }

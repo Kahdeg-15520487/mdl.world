@@ -354,3 +354,57 @@
         background: #2d3748;
     }
 }
+
+/* Configuration styles */
+.api-url-display {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    display: inline-block;
+    margin: 5px 0;
+    word-break: break-all;
+}
+
+.config-info {
+    background: var(--config-bg);
+    border: 1px solid var(--config-border);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.config-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 8px 0;
+}
+
+.config-list {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-left: 20px;
+}
+
+.config-list li {
+    margin: 4px 0;
+}
+
+.api-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(76, 99, 210, 0.2);
+}
